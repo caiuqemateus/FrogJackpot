@@ -1,563 +1,761 @@
 /* Reset básico e configurações globais */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 /* Estilo do corpo da página */
 body {
-    background: linear-gradient(135deg, #1a1a2e, #16213e);
-    color: #fff;
-    min-height: 100vh;
-    padding: 20px;
-    overflow-x: hidden;
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  color: #fff;
+  min-height: 100vh;
+  padding: 20px;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease;
 }
 
 /* Container principal */
 .container {
-    max-width: 800px;
-    margin: 0 auto;
-    background-color: rgba(0, 0, 0, 0.4);
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    animation: fadeIn 0.5s ease;
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.5s ease;
 }
 
 /* Estilo do cabeçalho */
 header {
-    text-align: center;
-    margin-bottom: 20px;
-    padding-bottom: 15px;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
 }
 
 /* Título principal */
 h1 {
-    font-size: 2.5rem;
-    margin-bottom: 10px;
-    color: gold;
-    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-    animation: glow 2s ease-in-out infinite;
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  color: gold;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* Controles do usuário */
+.user-controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Estilos para os botões de perfil e configurações */
+.profile-settings {
+  display: flex;
+  gap: 10px;
+}
+
+.profile-btn,
+.settings-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+.profile-btn:hover,
+.settings-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Estilo do Jackpot */
 .jackpot {
-    font-size: 1.4rem;
-    margin-bottom: 15px;
-    background: linear-gradient(90deg, #ff8a00, #e52e71);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    font-weight: bold;
-    animation: shimmer 2s infinite;
+  font-size: 1.4rem;
+  margin-bottom: 15px;
+  background: linear-gradient(90deg, #ff8a00, #e52e71);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: bold;
+  animation: shimmer 2s infinite;
 }
 
 /* Estilo do saldo */
 .balance {
-    font-size: 1.2rem;
-    margin-bottom: 20px;
-    padding: 10px;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 5px;
-    transition: all 0.3s ease;
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .balance:hover {
-    transform: scale(1.02);
-    background-color: rgba(255, 255, 255, 0.15);
+  transform: scale(1.02);
+  background-color: rgba(255, 255, 255, 0.15);
 }
 
 /* Área de controles do jogo */
 .game-controls {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 20px;
 }
 
 /* Grade de cores (seleção e resultados) */
-.color-selection, .results {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 10px;
-    animation: slideIn 0.5s ease;
+.color-selection,
+.results,
+.selected-colors-display {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+  animation: slideIn 0.5s ease;
 }
 
 /* Títulos secundários */
 h2 {
-    grid-column: 1 / -1;
-    margin-bottom: 10px;
-    color: #e0e0e0;
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+  grid-column: 1 / -1;
+  margin-bottom: 10px;
+  color: #e0e0e0;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
 }
 
 /* Opções de cores clicáveis */
 .color-option {
-    width: 100%;
-    aspect-ratio: 1/1;
-    border-radius: 10px;
-    cursor: pointer;
-    border: 3px solid transparent;
-    transition: all 0.2s ease;
-    position: relative;
-    overflow: hidden;
+  width: 100%;
+  aspect-ratio: 1/1;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 3px solid transparent;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 /* Contador de seleções */
 .selection-count {
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    background-color: #fff;
-    color: #000;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 14px;
-    border: 2px solid #000;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-    transition: all 0.3s ease;
-    animation: popIn 0.3s ease;
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background-color: #fff;
+  color: #000;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  border: 2px solid #000;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+  animation: popIn 0.3s ease;
 }
 
 /* Efeito hover nas opções de cores */
 .color-option:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  transform: scale(1.05);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
 .color-option:active {
-    transform: scale(0.95);
+  transform: scale(0.95);
 }
 
 /* Cor selecionada */
 .color-option.selected {
-    border-color: white;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
-    animation: pulse 1s infinite;
+  border-color: white;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+  animation: pulse 1s infinite;
 }
 
 /* Área de exibição das cores selecionadas */
 .selected-colors {
-    margin: 20px 0;
+  margin: 20px 0;
 }
 
 .selected-colors-display {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
 }
 
 .selected-color {
-    width: 100%;
-    aspect-ratio: 1/1;
-    border-radius: 10px;
-    background-color: #333;
-    border: 2px dashed rgba(255, 255, 255, 0.2);
-    transition: all 0.3s ease;
+  width: 100%;
+  aspect-ratio: 1/1;
+  border-radius: 10px;
+  background-color: #333;
+  border: 2px dashed rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
 }
 
 .selected-color.filled {
-    border: 2px solid white;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-    animation: bounceIn 0.5s ease;
+  border: 2px solid white;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+  animation: bounceIn 0.5s ease;
 }
 
 /* Controles de aposta */
 .bet-controls {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 20px 0;
 }
 
 .bet-input {
-    display: flex;
-    gap: 10px;
+  display: flex;
+  gap: 10px;
 }
 
 /* Estilo do input de aposta */
 input {
-    padding: 10px;
-    border-radius: 5px;
-    border: none;
-    width: 70%;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-    background-color: rgba(255, 255, 255, 0.9);
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background-color: rgba(255, 255, 255, 0.9);
+  flex: 1;
 }
 
 input:focus {
-    outline: none;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-    transform: scale(1.02);
+  outline: none;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  transform: scale(1.02);
 }
 
 /* Estilo dos botões */
 button {
-    padding: 10px 15px;
-    border-radius: 5px;
-    border: none;
-    background-color: #4CAF50;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+  padding: 10px 15px;
+  border-radius: 5px;
+  border: none;
+  background-color: #4caf50;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 button:hover {
-    background-color: #45a049;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background-color: #45a049;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 button:active {
-    transform: translateY(0);
+  transform: translateY(0);
 }
 
 button:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-    transform: none;
-    opacity: 0.7;
+  background-color: #cccccc;
+  cursor: not-allowed;
+  transform: none;
+  opacity: 0.7;
 }
 
 /* Botão de reset */
 #resetBtn {
-    background-color: #f44336;
+  background-color: #f44336;
 }
 
 #resetBtn:hover {
-    background-color: #d32f2f;
+  background-color: #d32f2f;
 }
 
 /* Cores do resultado */
 .result-color {
-    width: 100%;
-    aspect-ratio: 1/1;
-    border-radius: 10px;
-    opacity: 0;
-    transition: all 0.5s ease;
-    transform: scale(0);
+  width: 100%;
+  aspect-ratio: 1/1;
+  border-radius: 10px;
+  opacity: 0;
+  transition: all 0.5s ease;
+  transform: scale(0);
 }
 
 .result-color.revealed {
-    opacity: 1;
-    transform: scale(1);
-    border: 2px solid white;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-    animation: revealColor 0.5s ease;
+  opacity: 1;
+  transform: scale(1);
+  border: 2px solid white;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+  animation: revealColor 0.5s ease;
 }
 
 /* Mensagem de resultado */
 .result-message {
-    text-align: center;
-    font-size: 1.5rem;
-    margin: 20px 0;
-    padding: 15px;
-    border-radius: 5px;
-    background-color: rgba(0, 0, 0, 0.3);
-    min-height: 60px;
-    transition: all 0.3s ease;
+  text-align: center;
+  font-size: 1.5rem;
+  margin: 20px 0;
+  padding: 15px;
+  border-radius: 5px;
+  background-color: rgba(0, 0, 0, 0.3);
+  min-height: 60px;
+  transition: all 0.3s ease;
 }
 
 /* Estilos para vitória/derrota */
 .win {
-    color: #4CAF50;
-    font-weight: bold;
-    animation: celebrate 1.5s infinite;
-    text-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+  color: #4caf50;
+  font-weight: bold;
+  animation: celebrate 1.5s infinite;
+  text-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
 }
 
 .loss {
-    color: #f44336;
-    animation: shake 0.5s ease;
+  color: #f44336;
+  animation: shake 0.5s ease;
 }
 
 /* Área do histórico */
 .history {
-    margin-top: 20px;
-    padding-top: 10px;
-    border-top: 2px solid rgba(255, 255, 255, 0.1);
+  margin-top: 20px;
+  padding-top: 10px;
+  border-top: 2px solid rgba(255, 255, 255, 0.1);
 }
 
 .history h3 {
-    margin-bottom: 10px;
-    color: #e0e0e0;
-    font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: #e0e0e0;
+  font-size: 1.2rem;
 }
 
 .history-list {
-    max-height: 150px;
-    overflow-y: auto;
-    background-color: rgba(0, 0, 0, 0.2);
-    padding: 10px;
-    border-radius: 5px;
-    transition: all 0.3s ease;
+  max-height: 150px;
+  overflow-y: auto;
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  border-radius: 5px;
 }
 
 .history-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+  padding: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
 }
 
 .history-item:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    transform: translateX(5px);
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateX(5px);
 }
 
-/* Botão de regras */
-.rules-btn {
-    background-color: #2196F3;
-    margin-bottom: 10px;
+/* Modal de perfil e configurações */
+.profile-modal,
+.settings-modal {
+  max-width: 500px;
 }
 
-.rules-btn:hover {
-    background-color: #0b7dda;
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
-/* Modal de regras */
+/* Estilos para o formulário de perfil */
+.avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+#userAvatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #4a90e2;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* Estilos para as configurações */
+.settings-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.setting-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Switch toggle */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: '';
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: #2196f3;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+/* Tema escuro */
+body.dark-theme {
+  background: #1a1a2e;
+  color: #fff;
+}
+
+body.dark-theme .container {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+/* Modal comum */
 .modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
-    z-index: 1000;
-    overflow-y: auto;
-    animation: fadeIn 0.3s ease;
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  overflow-y: auto;
 }
 
 .modal-content {
-    background-color: #1a1a2e;
-    margin: 5% auto;
-    padding: 20px;
-    width: 80%;
-    max-width: 700px;
-    border-radius: 10px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
-    animation: slideDown 0.5s ease;
+  background-color: #1a1a2e;
+  margin: 5% auto;
+  padding: 20px;
+  width: 80%;
+  max-width: 700px;
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
 }
 
 /* Botão de fechar do modal */
 .close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .close:hover {
-    color: white;
-    transform: rotate(90deg);
+  color: white;
+  transform: rotate(90deg);
 }
 
 /* Tabelas de regras */
 .table-rules {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 15px 0;
-    animation: fadeIn 0.5s ease;
+  width: 100%;
+  border-collapse: collapse;
+  margin: 15px 0;
 }
 
-.table-rules th, .table-rules td {
-    padding: 10px;
-    text-align: left;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s ease;
+.table-rules th,
+.table-rules td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .table-rules th {
-    background-color: rgba(0, 0, 0, 0.3);
+  background-color: rgba(0, 0, 0, 0.3);
 }
 
 .table-rules tr:hover td {
-    background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Emojis nas regras */
-.emoji {
-    font-size: 1.5rem;
-    margin-right: 5px;
-    display: inline-block;
-    animation: bounce 1s infinite;
+/* Estilo do botão de adicionar saldo */
+#addBalanceBtn {
+  background-color: #2196f3;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: background-color 0.3s ease;
 }
 
-/* Estilo para quando cor atingir máximo de seleções */
-.color-option[data-count="6"] {
-    pointer-events: none;
-    opacity: 0.7;
-}
-
-/* Tooltip para máximo de seleções */
-.color-option[data-count="6"]::after {
-    content: "Máximo de seleções atingido";
-    position: absolute;
-    bottom: -30px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: rgba(0, 0, 0, 0.8);
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-size: 12px;
-    white-space: nowrap;
-    z-index: 100;
-    animation: fadeIn 0.3s ease;
-}
-
-/* Scrollbar personalizada */
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 4px;
-    transition: all 0.3s ease;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.4);
+#addBalanceBtn:hover {
+  background-color: #0b7dda;
 }
 
 /* Animações */
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideIn {
-    from { transform: translateX(-20px); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
-}
-
-@keyframes slideDown {
-    from { transform: translateY(-50px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 @keyframes popIn {
-    from { transform: scale(0); }
-    to { transform: scale(1); }
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
 }
 
 @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 @keyframes bounceIn {
-    0% { transform: scale(0.3); }
-    50% { transform: scale(1.05); }
-    70% { transform: scale(0.9); }
-    100% { transform: scale(1); }
+  0% {
+    transform: scale(0.3);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 @keyframes revealColor {
-    from { transform: scale(0) rotate(-180deg); }
-    to { transform: scale(1) rotate(0); }
+  from {
+    transform: scale(0) rotate(-180deg);
+  }
+  to {
+    transform: scale(1) rotate(0);
+  }
 }
 
 @keyframes celebrate {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
 }
 
 @keyframes glow {
-    0% { text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
-    50% { text-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
-    100% { text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+  0% {
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+  }
+  100% {
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+  }
 }
 
 @keyframes shimmer {
-    0% { background-position: -200% center; }
-    100% { background-position: 200% center; }
-}
-
-@keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-5px); }
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
 }
 
 /* Responsividade */
 @media (max-width: 600px) {
-    .color-selection, .results {
-        grid-template-columns: repeat(3, 1fr);
-    }
-    
-    .selected-colors-display {
-        grid-template-columns: repeat(3, 1fr);
-    }
-    
-    .bet-input {
-        flex-direction: column;
-    }
-    
-    input {
-        width: 100%;
-    }
-    
-    .table-rules {
-        font-size: 14px;
-    }
+  .container {
+    padding: 10px;
+  }
 
-    h1 {
-        font-size: 2rem;
-    }
+  /* Mantém todas as cores em uma única linha */
+  .color-selection,
+  .results,
+  .selected-colors-display {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 5px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
 
-    .modal-content {
-        width: 95%;
-        margin: 10% auto;
-    }
-}
+  /* Esconde a barra de rolagem */
+  .color-selection::-webkit-scrollbar,
+  .results::-webkit-scrollbar,
+  .selected-colors-display::-webkit-scrollbar {
+    display: none;
+  }
 
-/* Modo escuro */
-@media (prefers-color-scheme: dark) {
-    .modal-content {
-        background-color: #0a0a1a;
-    }
+  .color-option,
+  .selected-color,
+  .result-color {
+    min-width: 40px;
+    width: 100%;
+    aspect-ratio: 1/1;
+  }
 
-    input {
-        background-color: rgba(255, 255, 255, 0.8);
-        color: #000;
-    }
-}
+  .bet-input {
+    flex-direction: column;
+  }
 
-/* Efeitos de hover melhorados */
-.selected-color:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
-}
+  input,
+  button {
+    width: 100%;
+    margin: 5px 0;
+  }
 
-.history-list:hover {
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  .jackpot {
+    font-size: 1.2rem;
+  }
+
+  .balance {
+    font-size: 1rem;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  #addBalanceBtn {
+    margin-left: 0;
+  }
+
+  .modal-content {
+    width: 95%;
+    margin: 10% auto;
+    padding: 15px;
+  }
+
+  .table-rules {
+    font-size: 14px;
+  }
 }
