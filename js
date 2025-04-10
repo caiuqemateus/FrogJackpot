@@ -1,4 +1,14 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Configurações do usuário
+    const userSettings = {
+        sound: true,
+        notifications: true,
+        darkTheme: false,
+        language: 'pt-BR',
+        username: 'caiuqemateus',
+        avatar: 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y'
+    };
+
     const state = {
         isRevealing: false,
         balance: 1000,
@@ -26,6 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
         ]
     };
 
+    // Elementos DOM
     const balanceEl = document.getElementById('balanceValue');
     const jackpotEl = document.getElementById('jackpotValue');
     const colorSelectionEl = document.querySelector('.color-selection');
@@ -36,10 +47,27 @@ document.addEventListener('DOMContentLoaded', function() {
     const historyList = document.getElementById('historyList');
     const rulesBtn = document.getElementById('rulesBtn');
     const rulesModal = document.getElementById('rulesModal');
+    const profileBtn = document.getElementById('profileBtn');
+    const settingsBtn = document.getElementById('settingsBtn');
+    const profileModal = document.getElementById('profileModal');
+    const settingsModal = document.getElementById('settingsModal');
+    const closeProfile = document.getElementById('closeProfile');
+    const closeSettings = document.getElementById('closeSettings');
+    const profileForm = document.getElementById('profileForm');
+    const soundToggle = document.getElementById('soundToggle');
+    const notificationToggle = document.getElementById('notificationToggle');
+    const themeToggle = document.getElementById('themeToggle');
+    const languageSelect = document.getElementById('languageSelect');
+    const avatarInput = document.getElementById('avatarInput');
+    const userAvatar = document.getElementById('userAvatar');
+    const changeAvatarBtn = document.getElementById('changeAvatarBtn');
+    const addBalanceBtn = document.getElementById('addBalanceBtn');
     const closeModal = document.querySelector('.close');
 
     // Função para tocar sons
     function playSound(type) {
+        if (!userSettings.sound) return;
+
         const sounds = {
             win: new Audio('https://assets.mixkit.co/active_storage/sfx/2017/2017-preview.mp3'),
             lose: new Audio('https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3'),
@@ -87,32 +115,31 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function initGame() {
-        loadGameState();
-        generateColorOptions();
-        updateBalance();
-        updateJackpot();
+    // Funções de configuração do usuário
+    function loadUserSettings() {
+        const savedSettings = localStorage.getItem('userSettings');
+        if (savedSettings) {
+            Object.assign(userSettings, JSON.parse(savedSettings));
+            updateUIFromSettings();
+        }
+    }
 
-        playBtn.addEventListener('click', playGame);
-        resetBtn.addEventListener('click', resetSelection);
+    function saveUserSettings() {
+        localStorage.setItem('userSettings', JSON.stringify(userSettings));
+    }
 
-        rulesBtn.addEventListener('click', () => {
-            rulesModal.style.display = 'block';
-        });
-
-        closeModal.addEventListener('click', () => {
-            rulesModal.style.display = 'none';
-        });
-
-        window.addEventListener('click', (e) => {
-            if (e.target === rulesModal) {
-                rulesModal.style.display = 'none';
-            }
-        });
+    function updateUIFromSettings() {
+        soundToggle.checked = userSettings.sound;
+        notificationToggle.checked = userSettings.notifications;
+        themeToggle.checked = userSettings.darkTheme;
+        languageSelect.value = userSettings.language;
+        document.body.classList.toggle('dark-theme', userSettings.darkTheme);
+        userAvatar.src = userSettings.avatar;
+        document.getElementById('username').value = userSettings.username;
     }
 
     function generateColorOptions() {
-        colorSelectionEl.innerHTML = '<h2>Escolha 6 cores (pode repetir até 6 vezes cada):</h2>';
+        colorSelectionEl.innerHTML = '<h2>Escolha suas cores (total: 6 seleções):</h2>';
 
         state.colors.forEach((color, index) => {
             const colorDiv = document.createElement('div');
@@ -306,13 +333,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const hasTripleMatch = hasTriple(houseResults) && hasMatchingTriple(playerColors, houseResults);
         const hasPairsMatch = hasPairs(houseResults) && hasMatchingPairs(playerColors, houseResults);
         const rainbowMatch = allDifferentColors(houseResults) && allDifferentColors(playerColors) && 
-                            playerColors.every(color => houseResults.includes(color));
+            playerColors.every(color => houseResults.includes(color));
 
         if (exactMatch && state.qualifiedForJackpot && state.houseProfitTotal > 0) {
             winAmount = state.jackpot;
             winType = 'Sequência Exata - JACKPOT!';
             state.jackpot = 100000;
             updateJackpot();
+            if (userSettings.notifications) {
+                showNotification('JACKPOT!', 'Parabéns! Você ganhou o jackpot!');
+            }
         } else if (exactMatch) {
             winAmount = betAmount * 1000;
             winType = 'Sequência Exata';
@@ -351,6 +381,9 @@ document.addEventListener('DOMContentLoaded', function() {
             resultMessage.textContent = `Você ganhou R$ ${winAmount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} (${winType})`;
             resultMessage.className = 'result-message win';
             state.houseProfitTotal -= (winAmount - betAmount);
+            if (userSettings.notifications && winAmount >= betAmount * 10) {
+                showNotification('Grande Vitória!', `Você ganhou R$ ${winAmount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}!`);
+            }
         } else {
             playSound('lose');
             resultMessage.textContent = 'Você perdeu. Tente novamente!';
@@ -474,5 +507,112 @@ document.addEventListener('DOMContentLoaded', function() {
         jackpotEl.textContent = `R$ ${state.jackpot.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
     }
 
+    function showNotification(title, message) {
+        if (!userSettings.notifications) return;
+
+        if ('Notification' in window) {
+            Notification.requestPermission().then(permission => {
+                if (permission === 'granted') {
+                    new Notification(title, { body: message });
+                }
+            });
+        }
+    }
+
+    function initGame() {
+        loadGameState();
+        loadUserSettings();
+        generateColorOptions();
+        updateBalance();
+        updateJackpot();
+
+        // Event listeners principais do jogo
+        playBtn.addEventListener('click', playGame);
+        resetBtn.addEventListener('click', resetSelection);
+
+        // Event Listeners para Perfil e Configurações
+        profileBtn.addEventListener('click', () => {
+            profileModal.style.display = 'block';
+            settingsModal.style.display = 'none';
+        });
+
+        settingsBtn.addEventListener('click', () => {
+            settingsModal.style.display = 'block';
+            profileModal.style.display = 'none';
+        });
+
+        closeProfile.addEventListener('click', () => profileModal.style.display = 'none');
+        closeSettings.addEventListener('click', () => settingsModal.style.display = 'none');
+
+        profileForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            userSettings.username = document.getElementById('username').value;
+            saveUserSettings();
+            profileModal.style.display = 'none';
+        });
+
+        changeAvatarBtn.addEventListener('click', () => avatarInput.click());
+
+        avatarInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    userSettings.avatar = e.target.result;
+                    userAvatar.src = e.target.result;
+                    saveUserSettings();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        soundToggle.addEventListener('change', (e) => {
+            userSettings.sound = e.target.checked;
+            saveUserSettings();
+        });
+
+        notificationToggle.addEventListener('change', (e) => {
+            userSettings.notifications = e.target.checked;
+            saveUserSettings();
+        });
+
+        themeToggle.addEventListener('change', (e) => {
+            userSettings.darkTheme = e.target.checked;
+            document.body.classList.toggle('dark-theme', e.target.checked);
+            saveUserSettings();
+        });
+
+        languageSelect.addEventListener('change', (e) => {
+            userSettings.language = e.target.value;
+            saveUserSettings();
+        });
+
+        addBalanceBtn.addEventListener('click', () => {
+            state.balance += 100;
+            updateBalance();
+            saveGameState();
+            if (userSettings.notifications) {
+                showNotification('Saldo adicionado', 'R$ 100,00 foram adicionados à sua conta!');
+            }
+        });
+
+        // Event listener para o botão de regras
+        rulesBtn.addEventListener('click', () => {
+            rulesModal.style.display = 'block';
+        });
+
+        closeModal.addEventListener('click', () => {
+            rulesModal.style.display = 'none';
+        });
+    }
+
+    // Event listeners para fechar modais ao clicar fora
+    window.addEventListener('click', (e) => {
+        if (e.target === rulesModal) rulesModal.style.display = 'none';
+        if (e.target === profileModal) profileModal.style.display = 'none';
+        if (e.target === settingsModal) settingsModal.style.display = 'none';
+    });
+
+    // Inicializar o jogo
     initGame();
 });
