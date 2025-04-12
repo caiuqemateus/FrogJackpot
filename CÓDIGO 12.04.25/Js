@@ -9,6 +9,99 @@ document.addEventListener('DOMContentLoaded', function() {
         avatar: 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y'
     };
 
+    const translations = {
+        'pt-BR': {
+            title: 'Loteria das Cores',
+            balance: 'Seu Saldo',
+            jackpot: 'Jackpot Atual',
+            colorSelection: 'Escolha suas cores (total: 6 seleções):',
+            selectedColors: 'Suas Cores Selecionadas:',
+            betAmount: 'Valor da aposta (mínimo R$ 10,00)',
+            playButton: 'Jogar',
+            resetButton: 'Limpar Seleção',
+            drawResults: 'Resultado do Sorteio:',
+            history: 'Histórico de Jogadas',
+            rulesTitle: 'Regras do Jogo',
+            profileTitle: 'Perfil do Jogador',
+            settingsTitle: 'Configurações',
+            sound: 'Som',
+            notifications: 'Notificações',
+            darkTheme: 'Tema Escuro',
+            language: 'Idioma',
+            winMessage: 'Você ganhou R$ ',
+            loseMessage: 'Você perdeu. Tente novamente!',
+            invalidBet: 'Por favor, insira um valor numérico válido.',
+            minBet: 'A aposta mínima é de R$ 10,00.',
+            maxBet: 'A aposta máxima é de R$ 10.000,00.',
+            insufficientFunds: 'Saldo insuficiente para esta aposta.',
+            waitReveal: 'Aguarde a revelação da sequência atual!',
+            balanceAdded: 'Saldo Adicionado',
+            balanceAddedMessage: 'R$ 100,00 foram adicionados ao seu saldo!',
+            jackpotWin: 'Parabéns! Você ganhou o JACKPOT!',
+            bigWinTitle: 'Grande Vitória!'
+        },
+        'en-US': {
+            title: 'Color Lottery',
+            balance: 'Your Balance',
+            jackpot: 'Current Jackpot',
+            colorSelection: 'Choose your colors (total: 6 selections):',
+            selectedColors: 'Your Selected Colors:',
+            betAmount: 'Bet amount (minimum $10.00)',
+            playButton: 'Play',
+            resetButton: 'Clear Selection',
+            drawResults: 'Draw Results:',
+            history: 'Game History',
+            rulesTitle: 'Game Rules',
+            profileTitle: 'Player Profile',
+            settingsTitle: 'Settings',
+            sound: 'Sound',
+            notifications: 'Notifications',
+            darkTheme: 'Dark Theme',
+            language: 'Language',
+            winMessage: 'You won $ ',
+            loseMessage: 'You lost. Try again!',
+            invalidBet: 'Please enter a valid numeric value.',
+            minBet: 'Minimum bet is $10.00.',
+            maxBet: 'Maximum bet is $10,000.00.',
+            insufficientFunds: 'Insufficient funds for this bet.',
+            waitReveal: 'Please wait for the current sequence to be revealed!',
+            balanceAdded: 'Balance Added',
+            balanceAddedMessage: '$100.00 has been added to your balance!',
+            jackpotWin: 'Congratulations! You won the JACKPOT!',
+            bigWinTitle: 'Big Win!'
+        },
+        'es': {
+            title: 'Lotería de Colores',
+            balance: 'Tu Saldo',
+            jackpot: 'Jackpot Actual',
+            colorSelection: 'Elige tus colores (total: 6 selecciones):',
+            selectedColors: 'Tus Colores Seleccionados:',
+            betAmount: 'Monto de apuesta (mínimo $10.00)',
+            playButton: 'Jugar',
+            resetButton: 'Limpiar Selección',
+            drawResults: 'Resultados del Sorteo:',
+            history: 'Historial de Juegos',
+            rulesTitle: 'Reglas del Juego',
+            profileTitle: 'Perfil del Jugador',
+            settingsTitle: 'Configuraciones',
+            sound: 'Sonido',
+            notifications: 'Notificaciones',
+            darkTheme: 'Tema Oscuro',
+            language: 'Idioma',
+            winMessage: 'Ganaste $ ',
+            loseMessage: '¡Perdiste. ¡Intenta de nuevo!',
+            invalidBet: 'Por favor, ingrese un valor numérico válido.',
+            minBet: 'La apuesta mínima es $10.00.',
+            maxBet: 'La apuesta máxima es $10,000.00.',
+            insufficientFunds: 'Fondos insuficientes para esta apuesta.',
+            waitReveal: '¡Espere a que se revele la secuencia actual!',
+            balanceAdded: 'Saldo Añadido',
+            balanceAddedMessage: '¡Se han añadido $100.00 a tu saldo!',
+            jackpotWin: '¡Felicitaciones! ¡Ganaste el JACKPOT!',
+            bigWinTitle: '¡Gran Victoria!'
+        }
+    };
+
     const state = {
         isRevealing: false,
         balance: 1000,
@@ -36,8 +129,11 @@ document.addEventListener('DOMContentLoaded', function() {
         ]
     };
 
-    // Elementos DOM
-    const balanceEl = document.getElementById('balanceValue');
+    // Elementos DOM - Modificado para usar let em vez de const para balanceEl
+    let balanceEl = document.getElementById('balanceValue');
+    if (!balanceEl) {
+        console.error('Balance element not found!');
+    }
     const jackpotEl = document.getElementById('jackpotValue');
     const colorSelectionEl = document.querySelector('.color-selection');
     const betAmountEl = document.getElementById('betAmount');
@@ -61,10 +157,62 @@ document.addEventListener('DOMContentLoaded', function() {
     const avatarInput = document.getElementById('avatarInput');
     const userAvatar = document.getElementById('userAvatar');
     const changeAvatarBtn = document.getElementById('changeAvatarBtn');
-    const addBalanceBtn = document.getElementById('addBalanceBtn');
-    const closeModal = document.querySelector('.close');
+    let addBalanceBtn = document.getElementById('addBalanceBtn');
+    const closeModal = document.querySelector('.close');    // Função atualizada para atualizar o idioma
+    function updateLanguage(lang) {
+        if (!translations[lang]) return;
 
-    // Função para tocar sons
+        document.querySelector('h1').textContent = translations[lang].title;
+        document.querySelector('.jackpot').innerHTML = `${translations[lang].jackpot}: <span id="jackpotValue">${jackpotEl.textContent}</span>`;
+        
+        // Salva o valor atual do saldo antes de atualizar o HTML
+        const currentBalance = state.balance;
+        
+        // Atualiza o HTML do balance
+        document.querySelector('.balance').innerHTML = `${translations[lang].balance}: <span id="balanceValue">${currentBalance.toLocaleString(userSettings.language, {
+            style: 'currency',
+            currency: 'BRL',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        })}</span>
+        <button id="addBalanceBtn">➕ R$ 100,00</button>`;
+        
+        // Atualiza a referência do balanceEl e adiciona o evento no novo botão
+        balanceEl = document.getElementById('balanceValue');
+        const newAddBalanceBtn = document.getElementById('addBalanceBtn');
+        if (newAddBalanceBtn) {
+            newAddBalanceBtn.addEventListener('click', () => {
+                state.balance += 100;
+                updateBalance();
+                saveGameState();
+                if (userSettings.notifications) {
+                    const currentLang = translations[userSettings.language];
+                    showNotification(currentLang.balanceAdded, currentLang.balanceAddedMessage);
+                }
+            });
+        }
+
+        document.querySelector('.color-selection h2').textContent = translations[lang].colorSelection;
+        document.querySelector('.selected-colors h2').textContent = translations[lang].selectedColors;
+        document.querySelector('#betAmount').placeholder = translations[lang].betAmount;
+        document.querySelector('#playBtn').textContent = translations[lang].playButton;
+        document.querySelector('#resetBtn').textContent = translations[lang].resetButton;
+        document.querySelector('.results h2').textContent = translations[lang].drawResults;
+        document.querySelector('.history h3').textContent = translations[lang].history;
+
+        // Atualize os textos dos modais
+        document.querySelector('#rulesModal .modal-content h2').textContent = translations[lang].rulesTitle;
+        document.querySelector('#profileModal .modal-header h2').textContent = translations[lang].profileTitle;
+        document.querySelector('#settingsModal .modal-header h2').textContent = translations[lang].settingsTitle;
+
+        // Atualize os textos das configurações
+        document.querySelector('#settingsModal .setting-item:nth-child(1) span').textContent = translations[lang].sound;
+        document.querySelector('#settingsModal .setting-item:nth-child(2) span').textContent = translations[lang].notifications;
+        document.querySelector('#settingsModal .setting-item:nth-child(3) span').textContent = translations[lang].darkTheme;
+        document.querySelector('#settingsModal .setting-item:nth-child(4) span').textContent = translations[lang].language;
+    }
+
+    // Função atualizada para tocar sons
     function playSound(type) {
         if (!userSettings.sound) return;
 
@@ -80,10 +228,35 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Funções de armazenamento local
+    // Função atualizada para atualizar o saldo
+    function updateBalance() {
+        if (typeof state.balance !== 'number' || isNaN(state.balance)) {
+            console.error('Invalid balance value:', state.balance);
+            state.balance = 0;
+        }
+        
+        console.log('Updating balance to:', state.balance);
+        
+        // Pega a referência mais atual do elemento
+        const currentBalanceEl = document.getElementById('balanceValue');
+        if (currentBalanceEl) {
+            currentBalanceEl.textContent = state.balance.toLocaleString(userSettings.language, {
+                style: 'currency',
+                currency: 'BRL',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        } else {
+            console.error('Balance element not found when updating!');
+        }
+        
+        saveGameState();
+    }
+
+    // Funções de armazenamento local atualizadas
     function saveGameState() {
         const gameState = {
-            balance: state.balance,
+            balance: Number(state.balance), // Garante que é um número
             jackpot: state.jackpot,
             gameHistory: state.gameHistory,
             gameCount: state.gameCount,
@@ -93,34 +266,42 @@ document.addEventListener('DOMContentLoaded', function() {
             lastGameTime: state.lastGameTime
         };
         
-        localStorage.setItem('colorLotteryState', JSON.stringify(gameState));
-    }
-
-    function loadGameState() {
+        try {
+            localStorage.setItem('colorLotteryState', JSON.stringify(gameState));
+            console.log('Game state saved successfully:', gameState);
+        } catch (e) {
+            console.error('Error saving game state:', e);
+        }
+    }    function loadGameState() {
         const savedState = localStorage.getItem('colorLotteryState');
         if (savedState) {
-            const gameState = JSON.parse(savedState);
-            state.balance = gameState.balance;
-            state.jackpot = gameState.jackpot;
-            state.gameHistory = gameState.gameHistory;
-            state.gameCount = gameState.gameCount;
-            state.houseProfitTotal = gameState.houseProfitTotal;
-            state.jackpotContribution = gameState.jackpotContribution;
-            state.qualifiedForJackpot = gameState.qualifiedForJackpot;
-            state.lastGameTime = gameState.lastGameTime ? new Date(gameState.lastGameTime) : null;
-            
-            updateBalance();
-            updateJackpot();
-            updateHistoryDisplay();
+            try {
+                const gameState = JSON.parse(savedState);
+                state.balance = Number(gameState.balance);
+                state.jackpot = gameState.jackpot;
+                state.gameHistory = gameState.gameHistory;
+                state.gameCount = gameState.gameCount;
+                state.houseProfitTotal = gameState.houseProfitTotal;
+                state.jackpotContribution = gameState.jackpotContribution;
+                state.qualifiedForJackpot = gameState.qualifiedForJackpot;
+                state.lastGameTime = gameState.lastGameTime ? new Date(gameState.lastGameTime) : null;
+                
+                console.log('Game state loaded successfully:', state);
+                updateBalance();
+                updateJackpot();
+                updateHistoryDisplay();
+            } catch (e) {
+                console.error('Error loading game state:', e);
+            }
         }
     }
 
-    // Funções de configuração do usuário
     function loadUserSettings() {
         const savedSettings = localStorage.getItem('userSettings');
         if (savedSettings) {
             Object.assign(userSettings, JSON.parse(savedSettings));
             updateUIFromSettings();
+            updateLanguage(userSettings.language);
         }
     }
 
@@ -138,8 +319,18 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('username').value = userSettings.username;
     }
 
+    // Função atualizada para atualizar o jackpot
+    function updateJackpot() {
+        jackpotEl.textContent = state.jackpot.toLocaleString(userSettings.language, {
+            style: 'currency',
+            currency: 'BRL',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    }
+
     function generateColorOptions() {
-        colorSelectionEl.innerHTML = '<h2>Escolha suas cores (total: 6 seleções):</h2>';
+        colorSelectionEl.innerHTML = `<h2>${translations[userSettings.language].colorSelection}</h2>`;
 
         state.colors.forEach((color, index) => {
             const colorDiv = document.createElement('div');
@@ -189,32 +380,37 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function validateBet(betAmount) {
+        const currentLang = translations[userSettings.language];
+        
         if (isNaN(betAmount)) {
-            alert('Por favor, insira um valor numérico válido.');
+            alert(currentLang.invalidBet);
             return false;
         }
         
         if (betAmount < 10) {
-            alert('A aposta mínima é de R$ 10,00.');
+            alert(currentLang.minBet);
             return false;
         }
         
         if (betAmount > 10000) {
-            alert('A aposta máxima é de R$ 10.000,00.');
+            alert(currentLang.maxBet);
             return false;
         }
         
         if (betAmount > state.balance) {
-            alert('Saldo insuficiente para esta aposta.');
+            alert(currentLang.insufficientFunds);
             return false;
         }
         
         return true;
     }
 
+    // Função atualizada de jogo
     function playGame() {
+        const currentLang = translations[userSettings.language];
+        
         if (state.isRevealing) {
-            alert('Aguarde a revelação da sequência atual!');
+            alert(currentLang.waitReveal);
             return;
         }
 
@@ -228,6 +424,8 @@ document.addEventListener('DOMContentLoaded', function() {
         playBtn.disabled = true;
 
         state.balance -= betAmount;
+        updateBalance(); // Atualização imediata do saldo
+
         const jackpotContribution = betAmount * 0.02;
         state.jackpot += jackpotContribution;
         state.jackpotContribution += jackpotContribution;
@@ -238,7 +436,6 @@ document.addEventListener('DOMContentLoaded', function() {
             state.qualifiedForJackpot = true;
         }
 
-        updateBalance();
         updateJackpot();
 
         const houseResults = [];
@@ -249,9 +446,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         revealResults(houseResults, betAmount);
         saveGameState();
-    }
-
-    function revealResults(houseResults, betAmount) {
+    }    function revealResults(houseResults, betAmount) {
         let delay = 0;
 
         for (let i = 0; i < 6; i++) {
@@ -324,6 +519,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function checkWin(houseResults, betAmount) {
+        const currentLang = translations[userSettings.language];
         let winAmount = 0;
         let winType = '';
 
@@ -341,7 +537,7 @@ document.addEventListener('DOMContentLoaded', function() {
             state.jackpot = 100000;
             updateJackpot();
             if (userSettings.notifications) {
-                showNotification('JACKPOT!', 'Parabéns! Você ganhou o jackpot!');
+                showNotification('JACKPOT!', currentLang.jackpotWin);
             }
         } else if (exactMatch) {
             winAmount = betAmount * 1000;
@@ -378,46 +574,37 @@ document.addEventListener('DOMContentLoaded', function() {
             playSound('win');
             state.balance += winAmount;
             updateBalance();
-            resultMessage.textContent = `Você ganhou R$ ${winAmount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} (${winType})`;
+            resultMessage.textContent = `${currentLang.winMessage}${winAmount.toLocaleString(userSettings.language, { minimumFractionDigits: 2 })} (${winType})`;
             resultMessage.className = 'result-message win';
             state.houseProfitTotal -= (winAmount - betAmount);
             if (userSettings.notifications && winAmount >= betAmount * 10) {
-                showNotification('Grande Vitória!', `Você ganhou R$ ${winAmount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}!`);
+                showNotification(currentLang.bigWinTitle, `${currentLang.winMessage}${winAmount.toLocaleString(userSettings.language, { minimumFractionDigits: 2 })}!`);
             }
         } else {
             playSound('lose');
-            resultMessage.textContent = 'Você perdeu. Tente novamente!';
+            resultMessage.textContent = currentLang.loseMessage;
             resultMessage.className = 'result-message loss';
             state.houseProfitTotal += betAmount - state.jackpotContribution;
         }
 
         updateHistoryDisplay();
         saveGameState();
-    }
+    }    function hasMatchingTriple(playerColors, houseResults) {
+        let houseTripleColor = null;
+        for (let i = 0; i < houseResults.length - 2; i++) {
+            if (houseResults[i] === houseResults[i + 1] && 
+                houseResults[i] === houseResults[i + 2]) {
+                houseTripleColor = houseResults[i];
+                break;
+            }
+        }
 
-    function hasMatchingTriple(playerColors, houseResults) {
-        const houseCounts = countOccurrences(houseResults.map(idx => state.colors[idx].name));
-        const playerCounts = countOccurrences(playerColors.map(idx => state.colors[idx].name));
+        if (!houseTripleColor) return false;
 
-        const tripleColor = Object.entries(houseCounts)
-            .find(([_, count]) => count >= 3)?.[0];
-
-        if (!tripleColor) return false;
-
-        return playerCounts[tripleColor] >= 3;
-    }
-
-    function hasMatchingPairs(playerColors, houseResults) {
-        const houseCounts = countOccurrences(houseResults.map(idx => state.colors[idx].name));
-        const playerCounts = countOccurrences(playerColors.map(idx => state.colors[idx].name));
-
-        const housePairs = Object.entries(houseCounts)
-            .filter(([_, count]) => count >= 2);
-
-        if (housePairs.length < 1) return false;
-
-        for (const [color, count] of housePairs) {
-            if (playerCounts[color] >= count) {
+        for (let i = 0; i < playerColors.length - 2; i++) {
+            if (playerColors[i] === playerColors[i + 1] && 
+                playerColors[i] === playerColors[i + 2] && 
+                playerColors[i] === houseTripleColor) {
                 return true;
             }
         }
@@ -425,15 +612,89 @@ document.addEventListener('DOMContentLoaded', function() {
         return false;
     }
 
+    function hasMatchingPairs(playerColors, houseResults) {
+        let housePairColor = null;
+        let housePairPosition = -1;
+        
+        for (let i = 0; i < houseResults.length - 1; i++) {
+            if (houseResults[i] === houseResults[i + 1]) {
+                housePairColor = houseResults[i];
+                housePairPosition = i;
+                break;
+            }
+        }
+
+        if (housePairColor === null) return false;
+
+        for (let i = 0; i < playerColors.length - 1; i++) {
+            if (playerColors[i] === playerColors[i + 1] && 
+                playerColors[i] === housePairColor) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    function isAlternatingColors(arr) {
+        if (arr.length < 4) return false;
+        
+        const color1 = arr[0];
+        const color2 = arr[1];
+        
+        if (color1 === color2) return false;
+        
+        for (let i = 0; i < 4; i++) {
+            if (arr[i] !== (i % 2 === 0 ? color1 : color2)) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
     function hasSameAlternatingColors(playerColors, houseResults) {
         if (!isAlternatingColors(houseResults)) return false;
 
-        for (let i = 0; i < playerColors.length; i++) {
+        const color1House = houseResults[0];
+        const color2House = houseResults[1];
+        const color1Player = playerColors[0];
+        const color2Player = playerColors[1];
+
+        if (color1House !== color1Player || color2House !== color2Player) {
+            return false;
+        }
+
+        for (let i = 0; i < 4; i++) {
             if (playerColors[i] !== houseResults[i]) {
                 return false;
             }
         }
+
         return true;
+    }
+
+    function allDifferentColors(arr) {
+        const uniqueColors = new Set(arr);
+        return uniqueColors.size === 6;
+    }
+
+    function hasTriple(arr) {
+        for (let i = 0; i < arr.length - 2; i++) {
+            if (arr[i] === arr[i + 1] && arr[i] === arr[i + 2]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function hasPairs(arr) {
+        for (let i = 0; i < arr.length - 1; i++) {
+            if (arr[i] === arr[i + 1]) {
+                return true;
+            }
+        }
+        return false;
     }
 
     function arraysEqual(arr1, arr2) {
@@ -444,37 +705,8 @@ document.addEventListener('DOMContentLoaded', function() {
         return true;
     }
 
-    function isAlternatingColors(arr) {
-        if (arr.length < 2) return false;
-        const color1 = arr[0];
-        const color2 = arr[1];
-        if (color1 === color2) return false;
-        return arr.every((color, i) => color === (i % 2 === 0 ? color1 : color2));
-    }
-
-    function hasPairs(arr) {
-        const counts = countOccurrences(arr);
-        return Object.values(counts).some(count => count >= 2);
-    }
-
-    function hasTriple(arr) {
-        const counts = countOccurrences(arr);
-        return Object.values(counts).some(count => count >= 3);
-    }
-
-    function countOccurrences(arr) {
-        const counts = {};
-        for (const num of arr) {
-            counts[num] = (counts[num] || 0) + 1;
-        }
-        return counts;
-    }
-
-    function allDifferentColors(arr) {
-        return new Set(arr).size === arr.length;
-    }
-
     function updateHistoryDisplay() {
+        const currentLang = translations[userSettings.language];
         historyList.innerHTML = '';
 
         state.gameHistory.forEach(game => {
@@ -482,14 +714,14 @@ document.addEventListener('DOMContentLoaded', function() {
             historyItem.className = 'history-item';
 
             const info = document.createElement('div');
-            info.textContent = `Aposta: R$ ${game.bet.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+            info.textContent = `${currentLang.betAmount}: ${game.bet.toLocaleString(userSettings.language, { minimumFractionDigits: 2 })}`;
 
             const result = document.createElement('div');
             if (game.winAmount > 0) {
-                result.textContent = `Ganhou: R$ ${game.winAmount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} (${game.winType})`;
+                result.textContent = `${currentLang.winMessage}${game.winAmount.toLocaleString(userSettings.language, { minimumFractionDigits: 2 })} (${game.winType})`;
                 result.style.color = '#4CAF50';
             } else {
-                result.textContent = 'Perdeu';
+                result.textContent = currentLang.loseMessage;
                 result.style.color = '#f44336';
             }
 
@@ -497,14 +729,6 @@ document.addEventListener('DOMContentLoaded', function() {
             historyItem.appendChild(result);
             historyList.appendChild(historyItem);
         });
-    }
-
-    function updateBalance() {
-        balanceEl.textContent = `R$ ${state.balance.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
-    }
-
-    function updateJackpot() {
-        jackpotEl.textContent = `R$ ${state.jackpot.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
     }
 
     function showNotification(title, message) {
@@ -517,9 +741,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         }
-    }
-
+    }    // Função de inicialização atualizada
     function initGame() {
+        console.log('Initializing game...');
         loadGameState();
         loadUserSettings();
         generateColorOptions();
@@ -566,6 +790,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
+        // Event listeners para configurações
         soundToggle.addEventListener('change', (e) => {
             userSettings.sound = e.target.checked;
             saveUserSettings();
@@ -583,16 +808,26 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         languageSelect.addEventListener('change', (e) => {
-            userSettings.language = e.target.value;
+            const newLang = e.target.value;
+            userSettings.language = newLang;
+            updateLanguage(newLang);
             saveUserSettings();
-        });
-
-        addBalanceBtn.addEventListener('click', () => {
-            state.balance += 100;
+            
+            // Atualiza todas as mensagens existentes com o novo idioma
             updateBalance();
-            saveGameState();
-            if (userSettings.notifications) {
-                showNotification('Saldo adicionado', 'R$ 100,00 foram adicionados à sua conta!');
+            updateJackpot();
+            updateHistoryDisplay();
+            
+            // Se houver uma mensagem de resultado, atualize-a
+            if (resultMessage.textContent) {
+                const isWin = resultMessage.classList.contains('win');
+                if (isWin) {
+                    const winAmount = parseFloat(resultMessage.textContent.match(/\d+(\.\d+)?/)[0]);
+                    const winType = resultMessage.textContent.split('(')[1].split(')')[0];
+                    resultMessage.textContent = `${translations[newLang].winMessage}${winAmount.toLocaleString(newLang, { minimumFractionDigits: 2 })} (${winType})`;
+                } else {
+                    resultMessage.textContent = translations[newLang].loseMessage;
+                }
             }
         });
 
@@ -604,14 +839,32 @@ document.addEventListener('DOMContentLoaded', function() {
         closeModal.addEventListener('click', () => {
             rulesModal.style.display = 'none';
         });
-    }
 
-    // Event listeners para fechar modais ao clicar fora
-    window.addEventListener('click', (e) => {
-        if (e.target === rulesModal) rulesModal.style.display = 'none';
-        if (e.target === profileModal) profileModal.style.display = 'none';
-        if (e.target === settingsModal) settingsModal.style.display = 'none';
-    });
+        // Event listeners para fechar modais ao clicar fora
+        window.addEventListener('click', (e) => {
+            if (e.target === rulesModal) rulesModal.style.display = 'none';
+            if (e.target === profileModal) profileModal.style.display = 'none';
+            if (e.target === settingsModal) settingsModal.style.display = 'none';
+        });
+
+        // Configuração inicial do botão de adicionar saldo
+        const initialAddBalanceBtn = document.getElementById('addBalanceBtn');
+        if (initialAddBalanceBtn) {
+            initialAddBalanceBtn.addEventListener('click', () => {
+                state.balance += 100;
+                updateBalance();
+                saveGameState();
+                if (userSettings.notifications) {
+                    const currentLang = translations[userSettings.language];
+                    showNotification(currentLang.balanceAdded, currentLang.balanceAddedMessage);
+                }
+            });
+        }
+
+        // Atualizar o idioma inicial
+        updateLanguage(userSettings.language);
+        console.log('Game initialized successfully');
+    }
 
     // Inicializar o jogo
     initGame();
