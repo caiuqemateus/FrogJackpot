@@ -1,0 +1,47 @@
+# Alterações Implementadas - FrogJackpot (12/04/2025)
+
+## 🎯 Principais Mudanças
+
+### Melhorias no Sistema de Som
+- Adicionado sistema de sons para feedback do usuário
+- Implementados sons para:
+  - Vitória
+  - Derrota
+  - Cliques
+  - Revelação de cores
+
+### Atualização da Interface
+- Adicionado botão de adicionar saldo para testes
+- Implementadas animações de feedback
+- Melhorada a responsividade em dispositivos móveis
+
+### Sistema Multi-idioma
+- Suporte para 3 idiomas:
+  - Português (BR)
+  - Inglês (US)
+  - Espanhol
+- Tradução dinâmica de todos os elementos da interface
+
+### Correções de Bugs
+- Corrigido problema de legibilidade nos inputs com tema escuro
+- Ajustado o sistema de atualização de saldo
+- Melhorado o feedback visual das jogadas
+
+### Documentação
+- Criado relatório técnico detalhado do projeto
+- Documentadas todas as funções principais
+- Adicionadas instruções de uso
+
+## 🔧 Detalhes Técnicos
+- Uso de localStorage para persistência
+- Implementação de animações CSS
+- Sistema de variáveis CSS para temas
+- Validações de apostas aprimoradas
+
+## 📝 Notas
+- Sistema em fase de testes
+- Necessário revisar regras de premiação
+- Planejada implementação de imagens no lugar das cores
+
+---
+commit: "feat: implementação de sons e melhorias na interface"
