@@ -1,0 +1,923 @@
+document.addEventListener('DOMContentLoaded', function() {
+    // Configurações do usuário
+    const userSettings = {
+        sound: true,
+        notifications: true,
+        darkTheme: false,
+        language: 'pt-BR',
+        username: 'caiuqemateus',
+        avatar: 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y'
+    };
+
+    const translations = {
+        'pt-BR': {
+            title: 'Loteria dos Sapos',
+            balance: 'Seu Saldo',
+            jackpot: 'Jackpot Atual',
+            colorSelection: 'Escolha seus sapos (total: 6 seleções):',
+            selectedColors: 'Seus Sapos Selecionados:',
+            betAmount: 'Valor da aposta (mínimo R$ 10,00)',
+            playButton: 'Jogar',
+            resetButton: 'Limpar Seleção',
+            drawResults: 'Resultado do Sorteio:',
+            history: 'Histórico de Jogadas',
+            rulesTitle: 'Regras do Jogo',
+            profileTitle: 'Perfil do Jogador',
+            settingsTitle: 'Configurações',
+            sound: 'Som',
+            notifications: 'Notificações',
+            darkTheme: 'Tema Escuro',
+            language: 'Idioma',
+            winMessage: 'Você ganhou R$ ',
+            loseMessage: 'Você perdeu. Tente novamente!',
+            invalidBet: 'Por favor, insira um valor numérico válido.',
+            minBet: 'A aposta mínima é de R$ 10,00.',
+            maxBet: 'A aposta máxima é de R$ 10.000,00.',
+            insufficientFunds: 'Saldo insuficiente para esta aposta.',
+            waitReveal: 'Aguarde a revelação da sequência atual!',
+            balanceAdded: 'Saldo Adicionado',
+            balanceAddedMessage: 'R$ 100,00 foram adicionados ao seu saldo!',
+            jackpotWin: 'Parabéns! Você ganhou o JACKPOT!',
+            bigWinTitle: 'Grande Vitória!'
+        },
+        'en-US': {
+            title: 'Frog Lottery',
+            balance: 'Your Balance',
+            jackpot: 'Current Jackpot',
+            colorSelection: 'Choose your frogs (total: 6 selections):',
+            selectedColors: 'Your Selected Frogs:',
+            betAmount: 'Bet amount (minimum $10.00)',
+            playButton: 'Play',
+            resetButton: 'Clear Selection',
+            drawResults: 'Draw Results:',
+            history: 'Game History',
+            rulesTitle: 'Game Rules',
+            profileTitle: 'Player Profile',
+            settingsTitle: 'Settings',
+            sound: 'Sound',
+            notifications: 'Notifications',
+            darkTheme: 'Dark Theme',
+            language: 'Language',
+            winMessage: 'You won $ ',
+            loseMessage: 'You lost. Try again!',
+            invalidBet: 'Please enter a valid numeric value.',
+            minBet: 'Minimum bet is $10.00.',
+            maxBet: 'Maximum bet is $10,000.00.',
+            insufficientFunds: 'Insufficient funds for this bet.',
+            waitReveal: 'Please wait for the current sequence to be revealed!',
+            balanceAdded: 'Balance Added',
+            balanceAddedMessage: '$100.00 has been added to your balance!',
+            jackpotWin: 'Congratulations! You won the JACKPOT!',
+            bigWinTitle: 'Big Win!'
+        },
+        'es': {
+            title: 'Lotería de Ranas',
+            balance: 'Tu Saldo',
+            jackpot: 'Jackpot Actual',
+            colorSelection: 'Elige tus ranas (total: 6 selecciones):',
+            selectedColors: 'Tus Ranas Seleccionadas:',
+            betAmount: 'Monto de apuesta (mínimo $10.00)',
+            playButton: 'Jugar',
+            resetButton: 'Limpiar Selección',
+            drawResults: 'Resultados del Sorteo:',
+            history: 'Historial de Juegos',
+            rulesTitle: 'Reglas del Juego',
+            profileTitle: 'Perfil del Jugador',
+            settingsTitle: 'Configuraciones',
+            sound: 'Sonido',
+            notifications: 'Notificaciones',
+            darkTheme: 'Tema Oscuro',
+            language: 'Idioma',
+            winMessage: 'Ganaste $ ',
+            loseMessage: '¡Perdiste. ¡Intenta de nuevo!',
+            invalidBet: 'Por favor, ingrese un valor numérico válido.',
+            minBet: 'La apuesta mínima es $10.00.',
+            maxBet: 'La apuesta máxima es $10,000.00.',
+            insufficientFunds: 'Fondos insuficientes para esta apuesta.',
+            waitReveal: '¡Espere a que se revele la secuencia actual!',
+            balanceAdded: 'Saldo Añadido',
+            balanceAddedMessage: '¡Se han añadido $100.00 a tu saldo!',
+            jackpotWin: '¡Felicitaciones! ¡Ganaste el JACKPOT!',
+            bigWinTitle: '¡Gran Victoria!'
+        }
+    };
+
+    const state = {
+        isRevealing: false,
+        balance: 1000,
+        jackpot: 100000,
+        selectedColors: [],
+        gameHistory: [],
+        gameCount: 0,
+        houseProfitTotal: 0,
+        jackpotContribution: 0,
+        qualifiedForJackpot: false,
+        lastGameTime: null,
+        colors: [
+            {
+                name: 'Sapo Amarelo',
+                hex: '#FFFF00',
+                imageUrl: 'https://raw.githubusercontent.com/caiuqemateus/FrogJackpot/main/Sapo%20amarelo.png'
+            },
+            {
+                name: 'Sapo Colorido',
+                hex: '#FF1493',
+                imageUrl: 'https://raw.githubusercontent.com/caiuqemateus/FrogJackpot/main/Sapo%20colorido.png'
+            },
+            {
+                name: 'Sapo Marrom e Amarelo',
+                hex: '#8B4513',
+                imageUrl: 'https://raw.githubusercontent.com/caiuqemateus/FrogJackpot/main/Sapo%20marrom%20e%20amarelo.png'
+            },
+            {
+                name: 'Sapo Preto Amarelo',
+                hex: '#000000',
+                imageUrl: 'https://raw.githubusercontent.com/caiuqemateus/FrogJackpot/main/Sapo%20preto%20amarelo.png'
+            },
+            {
+                name: 'Sapo Preto e Laranja',
+                hex: '#FFA500',
+                imageUrl: 'https://raw.githubusercontent.com/caiuqemateus/FrogJackpot/main/Sapo%20preto%20e%20laranja.png'
+            },
+            {
+                name: 'Sapo Verde e Laranja',
+                hex: '#00FF00',
+                imageUrl: 'https://raw.githubusercontent.com/caiuqemateus/FrogJackpot/main/Sapo%20verde%20e%20laranja.png'
+            },
+            {
+                name: 'Sapo Verde e Preto',
+                hex: '#006400',
+                imageUrl: 'https://raw.githubusercontent.com/caiuqemateus/FrogJackpot/main/Sapo%20verde%20e%20preto.png'
+            },
+            {
+                name: 'Sapo Verde e Vermelho',
+                hex: '#FF0000',
+                imageUrl: 'https://raw.githubusercontent.com/caiuqemateus/FrogJackpot/main/Sapo%20verde%20e%20vermelho.png'
+            },
+            {
+                name: 'Sapo Verde',
+                hex: '#00FF00',
+                imageUrl: 'https://raw.githubusercontent.com/caiuqemateus/FrogJackpot/main/Sapo%20verde.png'
+            },
+            {
+                name: 'Sapo Vermelho',
+                hex: '#FF0000',
+                imageUrl: 'https://raw.githubusercontent.com/caiuqemateus/FrogJackpot/main/Sapo%20vermelho.png'
+            },
+            {
+                name: 'Sapo Preto',
+                hex: '#000000',
+                imageUrl: 'https://raw.githubusercontent.com/caiuqemateus/FrogJackpot/main/sapo%20Preto.png'
+            },
+            {
+                name: 'Sapo Pastel',
+                hex: '#FFE4E1',
+                imageUrl: 'https://raw.githubusercontent.com/caiuqemateus/FrogJackpot/main/sapo%20pastel.png'
+            }
+        ]
+    };    // Elementos DOM
+    let balanceEl = document.getElementById('balanceValue');
+    const jackpotEl = document.getElementById('jackpotValue');
+    const colorSelectionEl = document.querySelector('.color-selection');
+    const betAmountEl = document.getElementById('betAmount');
+    const playBtn = document.getElementById('playBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const resultMessage = document.getElementById('resultMessage');
+    const historyList = document.getElementById('historyList');
+    const rulesBtn = document.getElementById('rulesBtn');
+    const rulesModal = document.getElementById('rulesModal');
+    const profileBtn = document.getElementById('profileBtn');
+    const settingsBtn = document.getElementById('settingsBtn');
+    const profileModal = document.getElementById('profileModal');
+    const settingsModal = document.getElementById('settingsModal');
+    const closeProfile = document.getElementById('closeProfile');
+    const closeSettings = document.getElementById('closeSettings');
+    const profileForm = document.getElementById('profileForm');
+    const soundToggle = document.getElementById('soundToggle');
+    const notificationToggle = document.getElementById('notificationToggle');
+    const themeToggle = document.getElementById('themeToggle');
+    const languageSelect = document.getElementById('languageSelect');
+    const avatarInput = document.getElementById('avatarInput');
+    const userAvatar = document.getElementById('userAvatar');
+    const changeAvatarBtn = document.getElementById('changeAvatarBtn');
+    let addBalanceBtn = document.getElementById('addBalanceBtn');
+    const closeModal = document.querySelector('.close');
+
+    // Funções de atualização da interface
+    function updateLanguage(lang) {
+        if (!translations[lang]) return;
+
+        document.querySelector('h1').textContent = translations[lang].title;
+        document.querySelector('.jackpot').innerHTML = `${translations[lang].jackpot}: <span id="jackpotValue">${jackpotEl.textContent}</span>`;
+        
+        const currentBalance = state.balance;
+        
+        document.querySelector('.balance').innerHTML = `${translations[lang].balance}: <span id="balanceValue">${currentBalance.toLocaleString(userSettings.language, {
+            style: 'currency',
+            currency: 'BRL',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        })}</span>
+        <button id="addBalanceBtn">➕ R$ 100,00</button>`;
+        
+        balanceEl = document.getElementById('balanceValue');
+        const newAddBalanceBtn = document.getElementById('addBalanceBtn');
+        if (newAddBalanceBtn) {
+            newAddBalanceBtn.addEventListener('click', () => {
+                state.balance += 100;
+                updateBalance();
+                saveGameState();
+                if (userSettings.notifications) {
+                    const currentLang = translations[userSettings.language];
+                    showNotification(currentLang.balanceAdded, currentLang.balanceAddedMessage);
+                }
+            });
+        }
+
+        document.querySelector('.color-selection h2').textContent = translations[lang].colorSelection;
+        document.querySelector('.selected-colors h2').textContent = translations[lang].selectedColors;
+        document.querySelector('#betAmount').placeholder = translations[lang].betAmount;
+        document.querySelector('#playBtn').textContent = translations[lang].playButton;
+        document.querySelector('#resetBtn').textContent = translations[lang].resetButton;
+        document.querySelector('.results h2').textContent = translations[lang].drawResults;
+        document.querySelector('.history h3').textContent = translations[lang].history;
+
+        document.querySelector('#rulesModal .modal-content h2').textContent = translations[lang].rulesTitle;
+        document.querySelector('#profileModal .modal-header h2').textContent = translations[lang].profileTitle;
+        document.querySelector('#settingsModal .modal-header h2').textContent = translations[lang].settingsTitle;
+
+        document.querySelector('#settingsModal .setting-item:nth-child(1) span').textContent = translations[lang].sound;
+        document.querySelector('#settingsModal .setting-item:nth-child(2) span').textContent = translations[lang].notifications;
+        document.querySelector('#settingsModal .setting-item:nth-child(3) span').textContent = translations[lang].darkTheme;
+        document.querySelector('#settingsModal .setting-item:nth-child(4) span').textContent = translations[lang].language;
+    }
+
+    function playSound(type) {
+        if (!userSettings.sound) return;
+
+        const sounds = {
+            win: new Audio('https://assets.mixkit.co/active_storage/sfx/2017/2017-preview.mp3'),
+            lose: new Audio('https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3'),
+            click: new Audio('https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3'),
+            reveal: new Audio('https://assets.mixkit.co/active_storage/sfx/2020/2020-preview.mp3')
+        };
+        
+        if (sounds[type]) {
+            sounds[type].play().catch(e => console.log('Erro ao tocar som:', e));
+        }
+    }
+
+    function updateBalance() {
+        if (typeof state.balance !== 'number' || isNaN(state.balance)) {
+            console.error('Invalid balance value:', state.balance);
+            state.balance = 0;
+        }
+        
+        console.log('Updating balance to:', state.balance);
+        
+        const currentBalanceEl = document.getElementById('balanceValue');
+        if (currentBalanceEl) {
+            currentBalanceEl.textContent = state.balance.toLocaleString(userSettings.language, {
+                style: 'currency',
+                currency: 'BRL',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        } else {
+            console.error('Balance element not found when updating!');
+        }
+        
+        saveGameState();
+    }
+
+    // Funções de armazenamento local
+    function saveGameState() {
+        const gameState = {
+            balance: Number(state.balance),
+            jackpot: state.jackpot,
+            gameHistory: state.gameHistory,
+            gameCount: state.gameCount,
+            houseProfitTotal: state.houseProfitTotal,
+            jackpotContribution: state.jackpotContribution,
+            qualifiedForJackpot: state.qualifiedForJackpot,
+            lastGameTime: state.lastGameTime
+        };
+        
+        try {
+            localStorage.setItem('colorLotteryState', JSON.stringify(gameState));
+            console.log('Game state saved successfully:', gameState);
+        } catch (e) {
+            console.error('Error saving game state:', e);
+        }
+    }    function loadGameState() {
+        const savedState = localStorage.getItem('colorLotteryState');
+        if (savedState) {
+            try {
+                const gameState = JSON.parse(savedState);
+                state.balance = Number(gameState.balance);
+                state.jackpot = gameState.jackpot;
+                state.gameHistory = gameState.gameHistory;
+                state.gameCount = gameState.gameCount;
+                state.houseProfitTotal = gameState.houseProfitTotal;
+                state.jackpotContribution = gameState.jackpotContribution;
+                state.qualifiedForJackpot = gameState.qualifiedForJackpot;
+                state.lastGameTime = gameState.lastGameTime ? new Date(gameState.lastGameTime) : null;
+                
+                console.log('Game state loaded successfully:', state);
+                updateBalance();
+                updateJackpot();
+                updateHistoryDisplay();
+            } catch (e) {
+                console.error('Error loading game state:', e);
+            }
+        }
+    }
+
+    function loadUserSettings() {
+        const savedSettings = localStorage.getItem('userSettings');
+        if (savedSettings) {
+            Object.assign(userSettings, JSON.parse(savedSettings));
+            updateUIFromSettings();
+            updateLanguage(userSettings.language);
+        }
+    }
+
+    function saveUserSettings() {
+        localStorage.setItem('userSettings', JSON.stringify(userSettings));
+    }
+
+    function updateUIFromSettings() {
+        soundToggle.checked = userSettings.sound;
+        notificationToggle.checked = userSettings.notifications;
+        themeToggle.checked = userSettings.darkTheme;
+        languageSelect.value = userSettings.language;
+        document.body.classList.toggle('dark-theme', userSettings.darkTheme);
+        userAvatar.src = userSettings.avatar;
+        document.getElementById('username').value = userSettings.username;
+    }
+
+    function updateJackpot() {
+        jackpotEl.textContent = state.jackpot.toLocaleString(userSettings.language, {
+            style: 'currency',
+            currency: 'BRL',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    }
+
+    // Funções atualizadas para manipulação de imagens
+    function generateColorOptions() {
+        colorSelectionEl.innerHTML = `<h2>${translations[userSettings.language].colorSelection}</h2>`;
+
+        state.colors.forEach((color, index) => {
+            const colorDiv = document.createElement('div');
+            colorDiv.className = 'color-option';
+            
+            const img = document.createElement('img');
+            img.src = color.imageUrl;
+            img.alt = color.name;
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'contain';
+            
+            colorDiv.dataset.index = index;
+            colorDiv.dataset.color = color.name;
+            colorDiv.title = color.name;
+
+            const counter = document.createElement('span');
+            counter.className = 'selection-count';
+            counter.style.display = 'none';
+            
+            colorDiv.appendChild(img);
+            colorDiv.appendChild(counter);
+            colorDiv.addEventListener('click', toggleColorSelection);
+            colorSelectionEl.appendChild(colorDiv);
+        });
+    }
+
+    function toggleColorSelection(e) {
+        if (state.isRevealing) return;
+
+        const colorDiv = e.target.closest('.color-option');
+        if (!colorDiv) return;
+
+        playSound('click');
+
+        const colorIndex = parseInt(colorDiv.dataset.index);
+        const currentCount = state.selectedColors.filter(c => c === colorIndex).length;
+
+        if (state.selectedColors.length < 6 && currentCount < 6) {
+            state.selectedColors.push(colorIndex);
+
+            const counter = colorDiv.querySelector('.selection-count');
+            const newCount = state.selectedColors.filter(c => c === colorIndex).length;
+            counter.textContent = newCount;
+            counter.style.display = 'block';
+
+            if (!colorDiv.classList.contains('selected')) {
+                colorDiv.classList.add('selected');
+            }
+        }
+
+        updateSelectedColorsDisplay();
+        playBtn.disabled = state.selectedColors.length !== 6;
+    }
+
+    function updateSelectedColorsDisplay() {
+        for (let i = 0; i < 6; i++) {
+            const selectedEl = document.getElementById(`selected${i}`);
+            selectedEl.innerHTML = '';
+            selectedEl.classList.remove('filled');
+            selectedEl.title = '';
+        }
+
+        state.selectedColors.forEach((colorIndex, i) => {
+            const selectedEl = document.getElementById(`selected${i}`);
+            const img = document.createElement('img');
+            img.src = state.colors[colorIndex].imageUrl;
+            img.alt = state.colors[colorIndex].name;
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'contain';
+            selectedEl.appendChild(img);
+            selectedEl.classList.add('filled');
+            selectedEl.title = state.colors[colorIndex].name;
+        });
+    }
+
+    function validateBet(betAmount) {
+        const currentLang = translations[userSettings.language];
+        
+        if (isNaN(betAmount)) {
+            alert(currentLang.invalidBet);
+            return false;
+        }
+        
+        if (betAmount < 10) {
+            alert(currentLang.minBet);
+            return false;
+        }
+        
+        if (betAmount > 10000) {
+            alert(currentLang.maxBet);
+            return false;
+        }
+        
+        if (betAmount > state.balance) {
+            alert(currentLang.insufficientFunds);
+            return false;
+        }
+        
+        return true;
+    }    function playGame() {
+        const currentLang = translations[userSettings.language];
+        
+        if (state.isRevealing) {
+            alert(currentLang.waitReveal);
+            return;
+        }
+
+        const betAmount = parseFloat(betAmountEl.value);
+        
+        if (!validateBet(betAmount)) {
+            return;
+        }
+
+        state.isRevealing = true;
+        playBtn.disabled = true;
+
+        state.balance -= betAmount;
+        updateBalance();
+
+        const jackpotContribution = betAmount * 0.02;
+        state.jackpot += jackpotContribution;
+        state.jackpotContribution += jackpotContribution;
+
+        state.gameCount++;
+        state.lastGameTime = new Date();
+        if (state.gameCount >= 5) {
+            state.qualifiedForJackpot = true;
+        }
+
+        updateJackpot();
+
+        const houseResults = [];
+        for (let i = 0; i < 6; i++) {
+            const randomIndex = Math.floor(Math.random() * state.colors.length);
+            houseResults.push(randomIndex);
+        }
+
+        revealResults(houseResults, betAmount);
+        saveGameState();
+    }
+
+    function revealResults(houseResults, betAmount) {
+        let delay = 0;
+
+        for (let i = 0; i < 6; i++) {
+            setTimeout(() => {
+                const resultEl = document.getElementById(`result${i}`);
+                resultEl.style.transform = 'scale(0)';
+                
+                setTimeout(() => {
+                    resultEl.innerHTML = '';
+                    const img = document.createElement('img');
+                    img.src = state.colors[houseResults[i]].imageUrl;
+                    img.alt = state.colors[houseResults[i]].name;
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.objectFit = 'contain';
+                    resultEl.appendChild(img);
+                    resultEl.classList.add('revealed');
+                    resultEl.title = state.colors[houseResults[i]].name;
+                    resultEl.style.transform = 'scale(1)';
+                    playSound('reveal');
+                }, 150);
+
+                if (i === 5) {
+                    setTimeout(() => {
+                        checkWin(houseResults, betAmount);
+                        state.isRevealing = false;
+                        playBtn.disabled = state.selectedColors.length !== 6;
+                    }, 500);
+                }
+            }, delay);
+
+            delay += 500;
+        }
+    }
+
+    function resetSelection() {
+        if (state.isRevealing) return;
+
+        state.selectedColors = [];
+
+        document.querySelectorAll('.color-option').forEach(div => {
+            div.classList.remove('selected');
+            const counter = div.querySelector('.selection-count');
+            counter.style.display = 'none';
+            counter.textContent = '';
+        });
+
+        for (let i = 0; i < 6; i++) {
+            const selectedEl = document.getElementById(`selected${i}`);
+            const resultEl = document.getElementById(`result${i}`);
+            selectedEl.innerHTML = '';
+            selectedEl.classList.remove('filled');
+            selectedEl.title = '';
+            resultEl.innerHTML = '';
+            resultEl.classList.remove('revealed');
+        }
+
+        resultMessage.textContent = '';
+        resultMessage.className = 'result-message';
+        playBtn.disabled = true;
+    }
+
+    function checkWin(houseResults, betAmount) {
+        const currentLang = translations[userSettings.language];
+        let winAmount = 0;
+        let winType = '';
+
+        const playerColors = state.selectedColors;
+        const exactMatch = arraysEqual(playerColors, houseResults);
+        const alternating = isAlternatingColors(houseResults) && hasSameAlternatingColors(playerColors, houseResults);
+        const hasTripleMatch = hasTriple(houseResults) && hasMatchingTriple(playerColors, houseResults);
+        const hasPairsMatch = hasPairs(houseResults) && hasMatchingPairs(playerColors, houseResults);
+        const rainbowMatch = allDifferentColors(houseResults) && allDifferentColors(playerColors) && 
+            playerColors.every(color => houseResults.includes(color));
+
+        if (exactMatch && state.qualifiedForJackpot && state.houseProfitTotal > 0) {
+            winAmount = state.jackpot;
+            winType = 'Sequência Exata - JACKPOT!';
+            state.jackpot = 100000;
+            updateJackpot();
+            if (userSettings.notifications) {
+                showNotification('JACKPOT!', currentLang.jackpotWin);
+            }
+        } else if (exactMatch) {
+            winAmount = betAmount * 1000;
+            winType = 'Sequência Exata';
+        } else if (alternating) {
+            winAmount = betAmount * 500;
+            winType = 'Cores Alternadas';
+        } else if (hasTripleMatch) {
+            winAmount = betAmount * 25;
+            winType = 'Tripla Repetida';
+        } else if (hasPairsMatch) {
+            winAmount = betAmount * 5;
+            winType = 'Par Encontrado';
+        } else if (rainbowMatch) {
+            winAmount = betAmount * 3;
+            winType = 'Sequência Arco-Íris';
+        }
+
+        const gameResult = {
+            bet: betAmount,
+            playerColors: playerColors.map(idx => state.colors[idx].name),
+            houseColors: houseResults.map(idx => state.colors[idx].name),
+            winAmount: winAmount,
+            winType: winType,
+            timestamp: new Date()
+        };
+
+        state.gameHistory.unshift(gameResult);
+        if (state.gameHistory.length > 10) {
+            state.gameHistory.pop();
+        }
+
+        if (winAmount > 0) {
+            playSound('win');
+            state.balance += winAmount;
+            updateBalance();
+            resultMessage.textContent = `${currentLang.winMessage}${winAmount.toLocaleString(userSettings.language, { minimumFractionDigits: 2 })} (${winType})`;
+            resultMessage.className = 'result-message win';
+            state.houseProfitTotal -= (winAmount - betAmount);
+            if (userSettings.notifications && winAmount >= betAmount * 10) {
+                showNotification(currentLang.bigWinTitle, `${currentLang.winMessage}${winAmount.toLocaleString(userSettings.language, { minimumFractionDigits: 2 })}!`);
+            }
+        } else {
+            playSound('lose');
+            resultMessage.textContent = currentLang.loseMessage;
+            resultMessage.className = 'result-message loss';
+            state.houseProfitTotal += betAmount - state.jackpotContribution;
+        }
+
+        updateHistoryDisplay();
+        saveGameState();
+    }    // Funções auxiliares
+    function hasMatchingTriple(playerColors, houseResults) {
+        let houseTripleColor = null;
+        for (let i = 0; i < houseResults.length - 2; i++) {
+            if (houseResults[i] === houseResults[i + 1] && 
+                houseResults[i] === houseResults[i + 2]) {
+                houseTripleColor = houseResults[i];
+                break;
+            }
+        }
+
+        if (!houseTripleColor) return false;
+
+        for (let i = 0; i < playerColors.length - 2; i++) {
+            if (playerColors[i] === playerColors[i + 1] && 
+                playerColors[i] === playerColors[i + 2] && 
+                playerColors[i] === houseTripleColor) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    function hasMatchingPairs(playerColors, houseResults) {
+        let housePairColor = null;
+        for (let i = 0; i < houseResults.length - 1; i++) {
+            if (houseResults[i] === houseResults[i + 1]) {
+                housePairColor = houseResults[i];
+                break;
+            }
+        }
+
+        if (housePairColor === null) return false;
+
+        for (let i = 0; i < playerColors.length - 1; i++) {
+            if (playerColors[i] === playerColors[i + 1] && 
+                playerColors[i] === housePairColor) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    function isAlternatingColors(arr) {
+        if (arr.length < 4) return false;
+        
+        const color1 = arr[0];
+        const color2 = arr[1];
+        
+        if (color1 === color2) return false;
+        
+        for (let i = 0; i < 4; i++) {
+            if (arr[i] !== (i % 2 === 0 ? color1 : color2)) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
+    function hasSameAlternatingColors(playerColors, houseResults) {
+        if (!isAlternatingColors(houseResults)) return false;
+
+        const color1House = houseResults[0];
+        const color2House = houseResults[1];
+        const color1Player = playerColors[0];
+        const color2Player = playerColors[1];
+
+        if (color1House !== color1Player || color2House !== color2Player) {
+            return false;
+        }
+
+        for (let i = 0; i < 4; i++) {
+            if (playerColors[i] !== houseResults[i]) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    function allDifferentColors(arr) {
+        const uniqueColors = new Set(arr);
+        return uniqueColors.size === 6;
+    }
+
+    function hasTriple(arr) {
+        for (let i = 0; i < arr.length - 2; i++) {
+            if (arr[i] === arr[i + 1] && arr[i] === arr[i + 2]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function hasPairs(arr) {
+        for (let i = 0; i < arr.length - 1; i++) {
+            if (arr[i] === arr[i + 1]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function arraysEqual(arr1, arr2) {
+        if (arr1.length !== arr2.length) return false;
+        for (let i = 0; i < arr1.length; i++) {
+            if (arr1[i] !== arr2[i]) return false;
+        }
+        return true;
+    }
+
+    function updateHistoryDisplay() {
+        historyList.innerHTML = '';
+        const currentLang = translations[userSettings.language];
+
+        state.gameHistory.forEach(game => {
+            const historyItem = document.createElement('div');
+            historyItem.className = 'history-item';
+
+            const info = document.createElement('div');
+            info.textContent = `${currentLang.betAmount}: ${game.bet.toLocaleString(userSettings.language, { minimumFractionDigits: 2 })}`;
+
+            const result = document.createElement('div');
+            if (game.winAmount > 0) {
+                result.textContent = `${currentLang.winMessage}${game.winAmount.toLocaleString(userSettings.language, { minimumFractionDigits: 2 })} (${game.winType})`;
+                result.style.color = '#4CAF50';
+            } else {
+                result.textContent = currentLang.loseMessage;
+                result.style.color = '#f44336';
+            }
+
+            historyItem.appendChild(info);
+            historyItem.appendChild(result);
+            historyList.appendChild(historyItem);
+        });
+    }
+
+    function showNotification(title, message) {
+        if (!userSettings.notifications) return;
+
+        if ('Notification' in window) {
+            Notification.requestPermission().then(permission => {
+                if (permission === 'granted') {
+                    new Notification(title, { body: message });
+                }
+            });
+        }
+    }    // Função de inicialização
+    function initGame() {
+        console.log('Initializing game...');
+        loadGameState();
+        loadUserSettings();
+        generateColorOptions();
+        updateBalance();
+        updateJackpot();
+
+        // Event listeners principais do jogo
+        playBtn.addEventListener('click', playGame);
+        resetBtn.addEventListener('click', resetSelection);
+
+        // Event Listeners para Perfil e Configurações
+        profileBtn.addEventListener('click', () => {
+            profileModal.style.display = 'block';
+            settingsModal.style.display = 'none';
+        });
+
+        settingsBtn.addEventListener('click', () => {
+            settingsModal.style.display = 'block';
+            profileModal.style.display = 'none';
+        });
+
+        closeProfile.addEventListener('click', () => profileModal.style.display = 'none');
+        closeSettings.addEventListener('click', () => settingsModal.style.display = 'none');
+
+        profileForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            userSettings.username = document.getElementById('username').value;
+            saveUserSettings();
+            profileModal.style.display = 'none';
+        });
+
+        changeAvatarBtn.addEventListener('click', () => avatarInput.click());
+
+        avatarInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    userSettings.avatar = e.target.result;
+                    userAvatar.src = e.target.result;
+                    saveUserSettings();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Event listeners para configurações
+        soundToggle.addEventListener('change', (e) => {
+            userSettings.sound = e.target.checked;
+            saveUserSettings();
+        });
+
+        notificationToggle.addEventListener('change', (e) => {
+            userSettings.notifications = e.target.checked;
+            saveUserSettings();
+        });
+
+        themeToggle.addEventListener('change', (e) => {
+            userSettings.darkTheme = e.target.checked;
+            document.body.classList.toggle('dark-theme', e.target.checked);
+            saveUserSettings();
+        });
+
+        languageSelect.addEventListener('change', (e) => {
+            const newLang = e.target.value;
+            userSettings.language = newLang;
+            updateLanguage(newLang);
+            saveUserSettings();
+            
+            updateBalance();
+            updateJackpot();
+            updateHistoryDisplay();
+            
+            if (resultMessage.textContent) {
+                const isWin = resultMessage.classList.contains('win');
+                if (isWin) {
+                    const winAmount = parseFloat(resultMessage.textContent.match(/\d+(\.\d+)?/)[0]);
+                    const winType = resultMessage.textContent.split('(')[1].split(')')[0];
+                    resultMessage.textContent = `${translations[newLang].winMessage}${winAmount.toLocaleString(newLang, { minimumFractionDigits: 2 })} (${winType})`;
+                } else {
+                    resultMessage.textContent = translations[newLang].loseMessage;
+                }
+            }
+        });
+
+        // Event listener para o botão de regras
+        rulesBtn.addEventListener('click', () => {
+            rulesModal.style.display = 'block';
+        });
+
+        closeModal.addEventListener('click', () => {
+            rulesModal.style.display = 'none';
+        });
+
+        // Event listeners para fechar modais ao clicar fora
+        window.addEventListener('click', (e) => {
+            if (e.target === rulesModal) rulesModal.style.display = 'none';
+            if (e.target === profileModal) profileModal.style.display = 'none';
+            if (e.target === settingsModal) settingsModal.style.display = 'none';
+        });
+
+        // Configuração inicial do botão de adicionar saldo
+        const initialAddBalanceBtn = document.getElementById('addBalanceBtn');
+        if (initialAddBalanceBtn) {
+            initialAddBalanceBtn.addEventListener('click', () => {
+                state.balance += 100;
+                updateBalance();
+                saveGameState();
+                if (userSettings.notifications) {
+                    const currentLang = translations[userSettings.language];
+                    showNotification(currentLang.balanceAdded, currentLang.balanceAddedMessage);
+                }
+            });
+        }
+
+        // Atualizar o idioma inicial
+        updateLanguage(userSettings.language);
+        console.log('Game initialized successfully');
+    }
+
+    // Inicializar o jogo
+    initGame();
+});
