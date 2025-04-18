@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loteria das Cores</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1>Loteria das Cores</h1>
+                <div class="user-controls">
+                    <div class="profile-settings">
+                        <button id="profileBtn" class="profile-btn">
+                            <i class="fas fa-user"></i>
+                        </button>
+                        <button id="settingsBtn" class="settings-btn">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="jackpot">Jackpot Atual: <span id="jackpotValue">R$ 100.000,00</span></div>
+            <div class="balance">
+                Seu Saldo: <span id="balanceValue">R$ 1.000,00</span>
+                <button id="addBalanceBtn">➕ R$ 100,00</button>
+            </div>
+            <button class="rules-btn" id="rulesBtn">Ver Regras do Jogo</button>
+        </header>
+
+        <div class="game-controls">
+            <div class="color-selection">
+                <h2>Escolha suas cores (total: 6 seleções):</h2>
+            </div>
+
+            <div class="selected-colors">
+                <h2>Suas Cores Selecionadas:</h2>
+                <div class="selected-colors-display">
+                    <div class="selected-color" id="selected0" title="Slot 1"></div>
+                    <div class="selected-color" id="selected1" title="Slot 2"></div>
+                    <div class="selected-color" id="selected2" title="Slot 3"></div>
+                    <div class="selected-color" id="selected3" title="Slot 4"></div>
+                    <div class="selected-color" id="selected4" title="Slot 5"></div>
+                    <div class="selected-color" id="selected5" title="Slot 6"></div>
+                </div>
+            </div>
+
+            <div class="bet-controls">
+                <div class="bet-input">
+                    <input type="number" id="betAmount" min="10" max="10000" value="50" placeholder="Valor da aposta (mínimo R$ 10,00)">
+                    <button id="playBtn" disabled>Jogar</button>
+                    <button id="resetBtn">Limpar Seleção</button>
+                </div>
+            </div>
+
+            <div class="results">
+                <h2>Resultado do Sorteio:</h2>
+                <div class="result-color" id="result0" title="Resultado 1"></div>
+                <div class="result-color" id="result1" title="Resultado 2"></div>
+                <div class="result-color" id="result2" title="Resultado 3"></div>
+                <div class="result-color" id="result3" title="Resultado 4"></div>
+                <div class="result-color" id="result4" title="Resultado 5"></div>
+                <div class="result-color" id="result5" title="Resultado 6"></div>
+            </div>
+
+            <div class="result-message" id="resultMessage"></div>
+        </div>
+
+        <div class="history">
+            <h3>Histórico de Jogadas</h3>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <!-- Modal de Regras -->
+    <div id="rulesModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Regras do Jogo – Loteria das Cores</h2>
+
+            <h3>➊ Como Jogar</h3>
+            <p>• Selecione 6 cores no total (pode repetir a mesma cor até 6 vezes)</p>
+            <p>• Faça sua aposta (mínimo R$ 10,00)</p>
+            <p>• Aguarde o sorteio das 6 cores</p>
+
+            <h3>➋ Prêmios </h3>
+            <table class="table-rules">
+                <tr>
+                    <th>Combinação</th>
+                    <th>Descrição</th>
+                    <th>Multiplicador</th>
+                </tr>
+                <tr>
+                    <td><span class="emoji"></span> Sequência Exata</td>
+                    <td>Acertar todas as 6 cores na ordem exata</td>
+                    <td>Jackpot ou 1000x</td>
+                </tr>
+                <tr>
+                    <td><span class="emoji"></span> Cores Alternadas</td>
+                    <td>Duas cores alternando perfeitamente</td>
+                    <td>500x</td>
+                </tr>
+                <tr>
+                    <td><span class="emoji"></span> Tripla</td>
+                    <td>Três cores iguais em qualquer posição</td>
+                    <td>25x</td>
+                </tr>
+                <tr>
+                    <td><span class="emoji"></span> Par Encontrado</td>
+                    <td>Um par de cores iguais</td>
+                    <td>5x</td>
+                </tr>
+                <tr>
+                    <td><span class="emoji"></span> Arco-Íris</td>
+                    <td>Seis cores diferentes em qualquer ordem</td>
+                    <td>3x</td>
+                </tr>
+            </table>
+
+            <h3>➌ Regras do Jackpot </h3>
+            <ul>
+                <p>• 2% de cada aposta vai para o Jackpot</p>
+                <p>• Precisa ter feito 5+ jogadas na última hora</p>
+                <p>• Casa precisa estar no lucro</p>
+                <p>• Valor inicial: R$ 100.000,00</p>
+            </ul>
+
+            <h3>➍ Dicas </h3>
+            <p>• Você pode clicar em uma cor várias vezes</p>
+            <p>• O contador mostra quantas vezes selecionou cada cor</p>
+            <p>• Use o botão "Limpar" para recomeçar a seleção</p>
+            <p>• Observe o histórico para aprender padrões</p>
+        </div>
+    </div>
+
+    <!-- Modal de Perfil -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content profile-modal">
+            <div class="modal-header">
+                <h2>Perfil do Jogador</h2>
+                <span class="close" id="closeProfile">&times;</span>
+            </div>
+            <form id="profileForm" class="profile-form">
+                <div class="avatar-section">
+                    <img id="userAvatar" src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" alt="Avatar do jogador">
+                    <button type="button" id="changeAvatarBtn">Alterar Avatar</button>
+                    <input type="file" id="avatarInput" accept="image/*" hidden>
+                </div>
+                <div class="form-group">
+                    <label for="username">Nome de Usuário</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-buttons">
+                    <button type="button" class="cancel-btn" id="cancelProfile">Cancelar</button>
+                    <button type="submit" class="save-btn">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Configurações -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content settings-modal">
+            <div class="modal-header">
+                <h2>Configurações</h2>
+                <span class="close" id="closeSettings">&times;</span>
+            </div>
+            <div class="settings-content">
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <i class="fas fa-volume-up" id="soundIcon"></i>
+                        <span>Som</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="soundToggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <i class="fas fa-bell" id="notificationIcon"></i>
+                        <span>Notificações</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="notificationToggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <i class="fas fa-moon" id="themeIcon"></i>
+                        <span>Tema Escuro</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="themeToggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <i class="fas fa-language"></i>
+                        <span>Idioma</span>
+                    </div>
+                    <select id="languageSelect">
+                        <option value="pt-BR">Português (BR)</option>
+                        <option value="en-US">English (US)</option>
+                        <option value="es">Español</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
