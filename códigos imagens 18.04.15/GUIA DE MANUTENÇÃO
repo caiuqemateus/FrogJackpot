@@ -1,0 +1,253 @@
+
+
+# GUIA DE MANUTENÇÃO - FROGJACKPOT
+**Versão:** 1.0  
+**Última Atualização:** 2025-04-18  
+**Autor:** @caiuqemateus  
+
+## SUMÁRIO
+1. [Visão Geral](#1-visão-geral)
+2. [Estrutura do Projeto](#2-estrutura-do-projeto)
+3. [Procedimentos de Manutenção](#3-procedimentos-de-manutenção)
+4. [Gestão de Assets](#4-gestão-de-assets)
+5. [Monitoramento e Performance](#5-monitoramento-e-performance)
+6. [Backup e Recuperação](#6-backup-e-recuperação)
+7. [Resolução de Problemas](#7-resolução-de-problemas)
+8. [Atualizações e Melhorias](#8-atualizações-e-melhorias)
+9. [Segurança](#9-segurança)
+10. [Documentação](#10-documentação)
+
+## 1. VISÃO GERAL
+
+### 1.1 Objetivo do Documento
+Este guia fornece instruções detalhadas para manutenção do FrogJackpot, garantindo sua operação contínua e eficiente.
+
+### 1.2 Tecnologias Utilizadas
+- HTML5
+- CSS3
+- JavaScript (Vanilla)
+- LocalStorage
+- GitHub para versionamento e hospedagem de assets
+
+## 2. ESTRUTURA DO PROJETO
+
+### 2.1 Hierarquia de Arquivos
+```plaintext
+FrogJackpot/
+├── index.html
+├── css/
+│   └── styles.css
+├── js/
+│   ├── config.js
+│   ├── game.js
+│   └── translations.js
+├── assets/
+│   └── images/
+│       ├── Sapo amarelo.png
+│       ├── Sapo colorido.png
+│       └── ... (outras imagens)
+└── documentation/
+    └── maintenance.md
+```
+
+### 2.2 Dependências Críticas
+- Font Awesome (ícones)
+- Navegadores modernos com suporte a ES6+
+- LocalStorage habilitado
+
+## 3. PROCEDIMENTOS DE MANUTENÇÃO
+
+### 3.1 Manutenção Diária
+- [ ] Verificar logs de erro no console
+- [ ] Monitorar uso do LocalStorage
+- [ ] Verificar disponibilidade das imagens
+- [ ] Revisar feedback dos usuários
+
+### 3.2 Manutenção Semanal
+- [ ] Backup completo do código
+- [ ] Análise de performance
+- [ ] Verificação de compatibilidade cross-browser
+- [ ] Atualização da documentação se necessário
+
+### 3.3 Manutenção Mensal
+- [ ] Auditoria completa do código
+- [ ] Otimização de assets
+- [ ] Atualização de dependências
+- [ ] Revisão de segurança
+
+## 4. GESTÃO DE ASSETS
+
+### 4.1 Imagens
+```javascript
+// Formato padrão para novas imagens
+{
+    name: 'Nome do Sapo',
+    hex: '#HEXCODE',
+    imageUrl: 'https://raw.githubusercontent.com/caiuqemateus/FrogJackpot/main/nome_do_arquivo.png'
+}
+```
+
+#### 4.1.1 Especificações de Imagem
+- Dimensões: 100x100 pixels
+- Formato: PNG
+- Tamanho máximo: 10KB
+- Naming convention: `Sapo [cor].png`
+
+### 4.2 Processo de Atualização de Assets
+1. Criar backup das imagens existentes
+2. Otimizar nova imagem
+3. Fazer upload para o GitHub
+4. Atualizar `config.js` com nova URL
+5. Testar em todos os dispositivos
+6. Documentar alteração
+
+## 5. MONITORAMENTO E PERFORMANCE
+
+### 5.1 Métricas Importantes
+- Tempo de carregamento inicial: < 2s
+- Tempo de resposta do jogo: < 100ms
+- Uso de memória: < 50MB
+- Tamanho total de assets: < 200KB
+
+### 5.2 Ferramentas de Monitoramento
+```javascript
+// Código para monitoramento de performance
+console.time('gameInitialization');
+// ... código de inicialização
+console.timeEnd('gameInitialization');
+
+// Monitoramento de memória
+const memoryUsage = performance.memory;
+console.log(`Heap size limit: ${memoryUsage.jsHeapSizeLimit}`);
+console.log(`Total heap size: ${memoryUsage.totalJSHeapSize}`);
+```
+
+## 6. BACKUP E RECUPERAÇÃO
+
+### 6.1 Procedimento de Backup
+```bash
+# Backup do código
+git archive --format=zip HEAD > backup-$(date +%Y%m%d).zip
+
+# Backup do LocalStorage (executar no console)
+const backup = {
+    gameState: localStorage.getItem('colorLotteryState'),
+    userSettings: localStorage.getItem('userSettings')
+};
+console.log(JSON.stringify(backup));
+```
+
+### 6.2 Procedimento de Recuperação
+```javascript
+// Restaurar dados do LocalStorage
+const backup = JSON.parse(backupString);
+localStorage.setItem('colorLotteryState', backup.gameState);
+localStorage.setItem('userSettings', backup.userSettings);
+```
+
+## 7. RESOLUÇÃO DE PROBLEMAS
+
+### 7.1 Problemas Comuns e Soluções
+
+#### 7.1.1 Imagens Não Carregam
+```javascript
+// Verificar URLs das imagens
+function checkImages() {
+    state.colors.forEach(color => {
+        const img = new Image();
+        img.onload = () => console.log(`${color.name}: OK`);
+        img.onerror = () => console.error(`${color.name}: FAIL`);
+        img.src = color.imageUrl;
+    });
+}
+```
+
+#### 7.1.2 Problemas de Performance
+1. Limpar LocalStorage antigo
+2. Verificar cache de imagens
+3. Atualizar assets problemáticos
+
+## 8. ATUALIZAÇÕES E MELHORIAS
+
+### 8.1 Processo de Atualização
+1. Criar branch de desenvolvimento
+2. Implementar mudanças
+3. Testar extensivamente
+4. Criar PR com documentação
+5. Review e merge
+
+### 8.2 Checklist de Deploy
+```plaintext
+□ Backup realizado
+□ Testes completados
+□ Documentação atualizada
+□ Assets otimizados
+□ Performance verificada
+□ Cross-browser testado
+□ Mobile-friendly confirmado
+```
+
+## 9. SEGURANÇA
+
+### 9.1 Boas Práticas
+- Sanitizar inputs de usuário
+- Validar dados do LocalStorage
+- Manter dependências atualizadas
+- Usar HTTPS para assets
+- Implementar rate limiting
+
+### 9.2 Checklist de Segurança
+```javascript
+// Exemplo de validação de dados
+function validateGameState(state) {
+    if (!state || typeof state !== 'object') return false;
+    if (typeof state.balance !== 'number') return false;
+    if (!Array.isArray(state.gameHistory)) return false;
+    return true;
+}
+```
+
+## 10. DOCUMENTAÇÃO
+
+### 10.1 Padrões de Código
+```javascript
+// Exemplo de documentação de função
+/**
+ * @function checkWin
+ * @param {Array} houseResults - Resultados da casa
+ * @param {number} betAmount - Valor da aposta
+ * @returns {Object} Resultado do jogo
+ * @description Verifica as combinações vencedoras
+ */
+```
+
+### 10.2 Registro de Alterações
+Manter um arquivo `CHANGELOG.md` com:
+- Data da alteração
+- Descrição da mudança
+- Autor
+- Número da versão
+
+## CONTATOS E SUPORTE
+
+### Equipe de Manutenção
+- Desenvolvedor Principal: @caiuqemateus
+- GitHub Repository: https://github.com/caiuqemateus/FrogJackpot
+
+### Canais de Comunicação
+- Issues do GitHub
+- Pull Requests
+- Email de suporte
+
+---
+
+**Notas Importantes:**
+1. Manter este guia atualizado
+2. Documentar todas as alterações
+3. Seguir os padrões estabelecidos
+4. Realizar backups regulares
+5. Testar em múltiplos ambientes
+
+**Versão do Documento:** 1.0  
+**Última Revisão:** 2025-04-18 22:45:14 UTC  
+**Próxima Revisão Programada:** 2025-05-18
