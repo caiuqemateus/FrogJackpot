@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pulo do Sapo - Caça Níquel</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="header">
+        <h1 class="title">Pulo do Sapo</h1>
+        <div class="jackpot">Jackpot: R$ 100.000,00</div>
+    </div>
+
+    <div class="balance-bar">
+        <div class="balance">Seu Saldo: R$ <span id="balance">1000.00</span></div>
+        <button class="add-money">+ R$ 100,00</button>
+    </div>
+
+    <div class="slot-machine">
+        <div class="reels">
+            <div class="paylines">
+                <div class="payline" style="top: 50px; width: 100%;" data-line="0"></div>
+                <div class="payline" style="top: 150px; width: 100%;" data-line="1"></div>
+                <div class="payline" style="top: 250px; width: 100%;" data-line="2"></div>
+
+                <div class="payline" style="top: 50px; left: 0; width: 50%; transform: rotate(15deg);" data-line="3"></div>
+                <div class="payline" style="top: 150px; left: 50%; width: 50%; transform: rotate(-15deg);" data-line="3"></div>
+
+                <div class="payline" style="top: 250px; left: 0; width: 50%; transform: rotate(-15deg);" data-line="4"></div>
+                <div class="payline" style="top: 150px; left: 50%; width: 50%; transform: rotate(15deg);" data-line="4"></div>
+
+                <div class="payline" style="top: 50px; left: 0; width: 25%; transform: rotate(30deg);" data-line="5"></div>
+                <div class="payline" style="top: 150px; left: 25%; width: 25%; transform: rotate(-30deg);" data-line="5"></div>
+                <div class="payline" style="top: 50px; left: 50%; width: 25%; transform: rotate(30deg);" data-line="5"></div>
+                <div class="payline" style="top: 150px; left: 75%; width: 25%; transform: rotate(-30deg);" data-line="5"></div>
+            </div>
+
+            <div class="reel" id="reel1">
+                <div class="symbol"><div class="sapo-icon" data-type="0"></div></div>
+                <div class="symbol"><div class="sapo-icon" data-type="1"></div></div>
+                <div class="symbol"><div class="sapo-icon" data-type="2"></div></div>
+            </div>
+            <div class="reel" id="reel2">
+                <div class="symbol"><div class="sapo-icon" data-type="3"></div></div>
+                <div class="symbol"><div class="sapo-icon" data-type="4"></div></div>
+                <div class="symbol"><div class="sapo-icon" data-type="5"></div></div>
+            </div>
+            <div class="reel" id="reel3">
+                <div class="symbol"><div class="sapo-icon" data-type="0"></div></div>
+                <div class="symbol"><div class="sapo-icon" data-type="1"></div></div>
+                <div class="symbol"><div class="sapo-icon" data-type="2"></div></div>
+            </div>
+            <div class="reel" id="reel4">
+                <div class="symbol"><div class="sapo-icon" data-type="3"></div></div>
+                <div class="symbol"><div class="sapo-icon" data-type="4"></div></div>
+                <div class="symbol"><div class="sapo-icon" data-type="5"></div></div>
+            </div>
+            <div class="reel" id="reel5">
+                <div class="symbol"><div class="sapo-icon" data-type="0"></div></div>
+                <div class="symbol"><div class="sapo-icon" data-type="1"></div></div>
+                <div class="symbol"><div class="sapo-icon" data-type="2"></div></div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="bet-controls">
+                <span>Aposta: R$</span>
+                <input type="number" min="10" value="10" class="bet-input" id="bet-amount">
+                <div class="auto-spin">
+                    <span>Auto:</span>
+                    <input type="number" min="0" max="100" value="0" class="auto-spin-input" id="auto-spins">
+                </div>
+            </div>
+            <button class="spin-button" id="spin-button">GIRAR</button>
+        </div>
+    </div>
+
+    <div class="result" id="result">
+        Boa sorte! Gire os rolos para começar.
+    </div>
+
+    <div class="pay-table">
+        <h3>Tabela de Pagamentos</h3>
+        <div class="pay-table-content">
+            <div class="pay-item">
+                <div class="pay-icons">
+                    <div class="mini-icon" style="background-color: #ffd700;"></div>
+                    <div class="mini-icon" style="background-color: #ffd700;"></div>
+                    <div class="mini-icon" style="background-color: #ffd700;"></div>
+                </div>
+                <div class="pay-value">x10</div>
+            </div>
+            <div class="pay-item">
+                <div class="pay-icons">
+                    <div class="mini-icon" style="background-color: #a855f7;"></div>
+                    <div class="mini-icon" style="background-color: #a855f7;"></div>
+                    <div class="mini-icon" style="background-color: #a855f7;"></div>
+                </div>
+                <div class="pay-value">x8</div>
+            </div>
+            <div class="pay-item">
+                <div class="pay-icons">
+                    <div class="mini-icon" style="background-color: #ef4444;"></div>
+                    <div class="mini-icon" style="background-color: #ef4444;"></div>
+                    <div class="mini-icon" style="background-color: #ef4444;"></div>
+                </div>
+                <div class="pay-value">x6</div>
+            </div>
+            <div class="pay-item">
+                <div class="pay-icons">
+                    <div class="mini-icon" style="background-color: #3b82f6;"></div>
+                    <div class="mini-icon" style="background-color: #3b82f6;"></div>
+                    <div class="mini-icon" style="background-color: #3b82f6;"></div>
+                </div>
+                <div class="pay-value">x5</div>
+            </div>
+            <div class="pay-item">
+                <div class="pay-icons">
+                    <div class="mini-icon" style="background-color: #4ade80;"></div>
+                    <div class="mini-icon" style="background-color: #4ade80;"></div>
+                    <div class="mini-icon" style="background-color: #4ade80;"></div>
+                </div>
+                <div class="pay-value">x4</div>
+            </div>
+            <div class="pay-item">
+                <div class="pay-icons">
+                    <div class="mini-icon" style="background-color: #333333;"></div>
+                    <div class="mini-icon" style="background-color: #333333;"></div>
+                    <div class="mini-icon" style="background-color: #333333;"></div>
+                </div>
+                <div class="pay-value">x3</div>
+            </div>
+            <div class="pay-item">
+                <div class="pay-icons">
+                    <div class="mini-icon" style="background-color: #ffd700;"></div>
+                    <div class="mini-icon" style="background-color: #ffd700;"></div>
+                    <div class="mini-icon" style="background-color: #ffd700;"></div>
+                    <div class="mini-icon" style="background-color: #ffd700;"></div>
+                    <div class="mini-icon" style="background-color: #ffd700;"></div>
+                </div>
+                <div class="pay-value">JACKPOT!</div>
+            </div>
+            <div class="pay-item">
+                <div class="pay-icons">
+                    <div class="mini-icon" style="background-color: #a855f7;"></div>
+                </div>
+                <div class="pay-value">CURINGA</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="history">
+        <h3>Histórico de Jogadas</h3>
+        <div class="history-list" id="history-list">
+            <div class="history-item">Bem-vindo ao Pulo do Sapo!</div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
