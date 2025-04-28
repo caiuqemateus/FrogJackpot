@@ -1,0 +1,340 @@
+// Elementos DOM
+const balanceEl = document.getElementById('balance');
+const betAmountEl = document.getElementById('bet-amount');
+const spinButton = document.getElementById('spin-button');
+const resultEl = document.getElementById('result');
+const historyListEl = document.getElementById('history-list');
+const addMoneyBtn = document.querySelector('.add-money');
+const autoSpinsEl = document.getElementById('auto-spins');
+const reels = document.querySelectorAll('.reel');
+
+// Dados do jogo
+let balance = 1000.00;
+let isSpinning = false;
+let autoSpinCount = 0;
+
+// Definir cores e valores para os diferentes tipos de sapos
+const sapoColors = [
+    '#ffd700', // Dourado - 0
+    '#4ade80', // Verde - 1
+    '#3b82f6', // Azul - 2
+    '#ef4444', // Vermelho - 3
+    '#333333', // Preto - 4
+    '#a855f7'  // Roxo (Curinga) - 5
+];
+
+const sapoNames = [
+    'Sapo Dourado',
+    'Sapo Verde',
+    'Sapo Azul',
+    'Sapo Vermelho',
+    'Sapo Preto',
+    'Sapo Mágico'
+];
+
+const sapoValues = [10, 4, 5, 6, 3, 8];
+
+// Linhas de pagamento (padrões)
+const paylinePatterns = [
+    [[0,0], [1,0], [2,0], [3,0], [4,0]], // Topo
+    [[0,1], [1,1], [2,1], [3,1], [4,1]], // Meio
+    [[0,2], [1,2], [2,2], [3,2], [4,2]], // Baixo
+    [[0,0], [1,1], [2,2], [3,1], [4,0]], // V
+    [[0,2], [1,1], [2,0], [3,1], [4,2]], // V invertido
+    [[0,0], [1,2], [2,0], [3,2], [4,0]]  // Zigue-zague
+];
+
+// Atualizar saldo exibido
+function updateBalance() {
+    balanceEl.textContent = balance.toFixed(2);
+}
+
+// Inicializar os sapos com cores
+function initializeSymbols() {
+    const sapoIcons = document.querySelectorAll('.sapo-icon');
+    sapoIcons.forEach(icon => {
+        const randomType = Math.floor(Math.random() * sapoColors.length);
+        icon.style.backgroundColor = sapoColors[randomType];
+        icon.dataset.type = randomType;
+    });
+}
+
+// Adicionar histórico
+function addToHistory(text) {
+    const historyItem = document.createElement('div');
+    historyItem.className = 'history-item';
+    historyItem.textContent = text;
+    historyListEl.prepend(historyItem);
+    if (historyListEl.children.length > 10) {
+        historyListEl.removeChild(historyListEl.lastChild);
+    }
+}
+
+// Limpar destaques
+function clearWinHighlights() {
+    document.querySelectorAll('.symbol').forEach(symbol => {
+        symbol.classList.remove('winning', 'highlight');
+    });
+}
+
+// Função checkStrictSequence atualizada
+function checkStrictSequence(symbols) {
+    let baseSymbol = null;
+    let count = 0;
+    let positions = [];
+
+    // Verifica cada símbolo da esquerda para a direita
+    for (let i = 0; i < symbols.length; i++) {
+        const currentSymbol = symbols[i];
+        
+        // Se é o primeiro símbolo
+        if (baseSymbol === null) {
+            // Se é curinga no início, pula
+            if (currentSymbol === 5) {
+                return null;
+            }
+            baseSymbol = currentSymbol;
+            count = 1;
+            positions = [i];
+            continue;
+        }
+
+        // Se não é o primeiro símbolo, verifica se é válido
+        if (currentSymbol === baseSymbol || currentSymbol === 5) {
+            count++;
+            positions.push(i);
+        } else {
+            break; // Para a verificação se encontrar símbolo diferente
+        }
+    }
+
+    // Retorna resultado se tiver 3 ou mais símbolos
+    if (count >= 3) {
+        return {
+            symbol: baseSymbol,
+            count: count,
+            positions: positions
+        };
+    }
+
+    return null;
+}
+
+// Girar os rolos e retornar os resultados
+function spinReels() {
+    return new Promise(resolve => {
+        isSpinning = true;
+        clearWinHighlights();
+        spinButton.disabled = true;
+        spinButton.textContent = 'GIRANDO...';
+
+        const results = Array(5).fill().map(() => Array(3).fill(0));
+
+        reels.forEach((reel, reelIndex) => {
+            const symbols = reel.querySelectorAll('.symbol');
+
+            setTimeout(() => {
+                symbols.forEach((symbol, symbolIndex) => {
+                    let randomType;
+                    const rand = Math.random();
+
+                    if (rand < 0.01) {
+                        randomType = 5; // Sapo mágico
+                    } else if (rand < 0.05) {
+                        randomType = 0; // Sapo dourado
+                    } else if (rand < 0.15) {
+                        randomType = 3;
+                    } else if (rand < 0.35) {
+                        randomType = 2;
+                    } else if (rand < 0.60) {
+                        randomType = 1;
+                    } else {
+                        randomType = 4;
+                    }
+
+                    const sapoIcon = symbol.querySelector('.sapo-icon');
+                    sapoIcon.style.backgroundColor = sapoColors[randomType];
+                    sapoIcon.dataset.type = randomType;
+                    results[reelIndex][symbolIndex] = randomType;
+                });
+
+                if (reelIndex === reels.length - 1) {
+                    setTimeout(() => {
+                        isSpinning = false;
+                        spinButton.disabled = false;
+                        spinButton.textContent = 'GIRAR';
+                        resolve(results);
+                    }, 500);
+                }
+            }, reelIndex * 200);
+        });
+    });
+}
+
+// Função checkWins atualizada
+function checkWins(results) {
+    let totalWin = 0;
+    const winningLines = [];
+    const winningSymbols = new Set();
+    const bet = parseInt(betAmountEl.value);
+
+    paylinePatterns.forEach((pattern, lineIndex) => {
+        const lineSymbols = pattern.map(([x, y]) => results[x][y]);
+
+        // Jackpot na linha do meio
+        if (lineIndex === 1 && lineSymbols.every(s => s === 0 || s === 5)) {
+            totalWin += 100000;
+            winningLines.push({
+                line: lineIndex,
+                symbol: 0,
+                count: 5,
+                win: 100000,
+                positions: pattern,
+                isJackpot: true
+            });
+            pattern.forEach(pos => winningSymbols.add(`${pos[0]},${pos[1]}`));
+            return;
+        }
+
+        const strictSequence = checkStrictSequence(lineSymbols);
+
+        if (strictSequence) {
+            const multiplier = sapoValues[strictSequence.symbol];
+            const lineWin = bet * multiplier * (strictSequence.count - 2);
+
+            const winPositions = strictSequence.positions.map(i => pattern[i]);
+            winPositions.forEach(pos => winningSymbols.add(`${pos[0]},${pos[1]}`));
+
+            winningLines.push({
+                line: lineIndex,
+                symbol: strictSequence.symbol,
+                count: strictSequence.count,
+                win: lineWin,
+                positions: winPositions
+            });
+
+            totalWin += lineWin;
+        }
+    });
+
+    return { totalWin, winningLines, winningSymbols };
+}
+
+// Destacar vitórias
+function highlightWins(winData) {
+    const { winningLines } = winData;
+
+    clearWinHighlights();
+
+    winningLines.forEach(lineData => {
+        lineData.positions.forEach(([x, y]) => {
+            const symbolElement = reels[x].querySelectorAll('.symbol')[y];
+            symbolElement.classList.add('winning');
+            if (lineData.isJackpot) {
+                symbolElement.classList.add('highlight');
+            }
+        });
+    });
+}
+
+// Processar uma rodada
+async function processSpin() {
+    const bet = parseInt(betAmountEl.value);
+
+    if (isNaN(bet) || bet < 10) {
+        resultEl.textContent = 'Aposta mínima: R$ 10,00';
+        return false;
+    }
+
+    if (bet > balance) {
+        resultEl.textContent = 'Saldo insuficiente!';
+        return false;
+    }
+
+    balance -= bet;
+    updateBalance();
+    resultEl.textContent = 'Boa sorte!';
+    resultEl.classList.remove('jackpot-win');
+
+    const results = await spinReels();
+    const winData = checkWins(results);
+
+    balance += winData.totalWin;
+    updateBalance();
+
+    if (winData.totalWin > 0) {
+        highlightWins(winData);
+        let message = `Você ganhou R$ ${winData.totalWin.toFixed(2)}!\n`;
+        winData.winningLines.forEach(line => {
+            if (line.isJackpot) {
+                message = `🎉 JACKPOT! Você ganhou R$ 100.000,00! 🎉`;
+                resultEl.classList.add('jackpot-win');
+            } else {
+                message += `${line.count}x ${sapoNames[line.symbol]} - R$ ${line.win.toFixed(2)}\n`;
+            }
+        });
+        resultEl.textContent = message;
+        addToHistory(`Aposta: R$ ${bet.toFixed(2)} - Ganhou: R$ ${winData.totalWin.toFixed(2)}`);
+    } else {
+        resultEl.textContent = 'Não foi dessa vez! Tente novamente.';
+        addToHistory(`Aposta: R$ ${bet.toFixed(2)} - Sem ganhos`);
+    }
+
+    return true;
+}
+
+// Gerenciar giros automáticos
+async function handleAutoSpin() {
+    const autoSpins = parseInt(autoSpinsEl.value);
+
+    if (autoSpins > 0) {
+        autoSpinCount = autoSpins;
+        await runAutoSpins();
+    }
+}
+
+async function runAutoSpins() {
+    while (autoSpinCount > 0 && !isSpinning) {
+        const success = await processSpin();
+        if (!success) break;
+
+        autoSpinCount--;
+        autoSpinsEl.value = autoSpinCount;
+
+        await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+}
+
+// Listeners
+spinButton.addEventListener('click', async () => {
+    if (!isSpinning) {
+        if (parseInt(autoSpinsEl.value) > 0) {
+            handleAutoSpin();
+        } else {
+            processSpin();
+        }
+    }
+});
+
+addMoneyBtn.addEventListener('click', () => {
+    balance += 100;
+    updateBalance();
+    addToHistory('Adicionado R$ 100,00 ao saldo');
+});
+
+betAmountEl.addEventListener('change', () => {
+    const bet = parseInt(betAmountEl.value);
+    if (bet < 10) {
+        betAmountEl.value = 10;
+    }
+});
+
+autoSpinsEl.addEventListener('change', () => {
+    const spins = parseInt(autoSpinsEl.value);
+    if (spins < 0) autoSpinsEl.value = 0;
+    if (spins > 100) autoSpinsEl.value = 100;
+});
+
+// Inicialização
+initializeSymbols();
+updateBalance();
