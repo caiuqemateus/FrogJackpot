@@ -1,0 +1,140 @@
+# Documentação do Código: Caça-Níquel "Pulo do Sapo"
+
+**Data da Criação:** [Data em que você começou o projeto]
+**Última Atualização:** [29/04/25]
+**Autor:** [LUiz Reinã]
+
+## 1. Visão Geral
+
+Este projeto implementa um jogo de caça-níquel temático chamado "Pulo do Sapo". O jogo apresenta cinco rolos, diferentes tipos de "sapos" como símbolos, múltiplas linhas de pagamento e funcionalidades como saldo do jogador, apostas, giros e um histórico de jogadas. Há também um jackpot progressivo.
+
+## 2. Estrutura de Arquivos
+
+O projeto é composto por três arquivos principais:
+
+* `index.html`: Contém a estrutura HTML da página, incluindo os elementos visuais do jogo.
+* `style.css`: Define a estilização visual do jogo, como cores, layouts e animações.
+* `script.js`: Contém a lógica de programação do jogo em JavaScript, controlando o comportamento dos rolos, as apostas, o cálculo de ganhos e a interação com o usuário.
+
+## 3. HTML (`index.html`)
+
+O HTML estrutura a interface do usuário do jogo, dividida nas seguintes seções principais:
+
+* **`header`:** Contém o título do jogo ("Pulo do Sapo") e a informação do jackpot.
+* **`balance-bar`:** Exibe o saldo atual do jogador e um botão para adicionar crédito.
+* **`slot-machine`:** A área principal do jogo, contendo:
+    * **`reels`:** O container para os cinco rolos giratórios. Cada rolo (`.reel`) contém múltiplos símbolos de sapo (`.symbol` com um `.sapo-icon` dentro).
+    * **`paylines`:** Uma camada sobre os rolos que define visualmente as diferentes linhas de pagamento. Cada `.payline` possui atributos de estilo para sua posição e um `data-line` para identificação.
+    * **`controls`:** Contém os controles de aposta (input para valor da aposta e controle de auto-giro) e o botão de girar (`.spin-button`).
+* **`result`:** Uma área para exibir mensagens ao jogador, como resultados de giros e avisos.
+* **`pay-table`:** Exibe a tabela de pagamentos, mostrando as combinações de símbolos e seus respectivos multiplicadores de ganho, incluindo o jackpot e o curinga.
+* **`history`:** Exibe um histórico das últimas jogadas do usuário.
+
+## 4. CSS (`style.css`)
+
+O CSS define a aparência visual do jogo:
+
+* **Estilos Globais:** Define a fonte padrão, margens, paddings e `box-sizing`.
+* **`body`:** Estiliza o fundo, a cor do texto e o layout principal da página (flexbox centralizado).
+* **`header`:** Estiliza o título e a informação do jackpot, alinhando-os horizontalmente.
+* **`balance-bar`:** Estiliza a barra de saldo, exibindo o saldo e o botão de adicionar crédito.
+* **`slot-machine`:** Estiliza o container da máquina caça-níquel, incluindo os rolos.
+* **`reels` e `.reel`:** Estilizam o layout dos rolos, garantindo que os símbolos fiquem em coluna e que haja um efeito de "máscara" para o giro.
+* **`.symbol` e `.sapo-icon`:** Estilizam os símbolos individuais dos sapos, incluindo tamanho, borda e a área de cor.
+* **`controls`:** Estiliza a área de controles de aposta e o botão de girar.
+* **`.bet-controls`:** Estiliza os controles relacionados à aposta.
+* **`.spin-button`:** Estiliza o botão de girar, com estados de hover e desabilitado.
+* **`result`:** Estiliza a área de mensagens de resultado.
+* **`.paylines` e `.payline`:** Estilizam as linhas de pagamento, incluindo sua posição, cor, transformação (rotação) e a animação de "flash" quando uma linha é vencedora. As posições exatas de cada linha são definidas usando `calc()` para precisão.
+* **Animações (`@keyframes`):** Define animações para símbolos vencedores (`winning-symbol`), o flash das linhas de pagamento (`payline-flash`) e o efeito visual do jackpot (`jackpot-animation`).
+* **`history`:** Estiliza a área do histórico de jogadas.
+* **`pay-table`:** Estiliza a tabela de pagamentos e seus itens.
+* **`.auto-spin`:** Estiliza os controles de auto-giro.
+
+## 5. JavaScript (`script.js`)
+
+O JavaScript contém a lógica principal do jogo:
+
+### 5.1. Seleção de Elementos DOM
+
+O script começa selecionando os principais elementos da página HTML usando `document.getElementById` e `document.querySelector`.
+
+### 5.2. Dados do Jogo
+
+* `balance`: Variável que armazena o saldo atual do jogador, inicializado em 1000.00.
+* `isSpinning`: Um booleano que indica se os rolos estão atualmente girando.
+* `autoSpinCount`: Um número que armazena a quantidade de giros automáticos restantes.
+* `sapoColors`: Array de strings contendo as cores associadas a cada tipo de sapo.
+* `sapoNames`: Array de strings contendo os nomes de cada tipo de sapo.
+* `sapoValues`: Array de números contendo os multiplicadores de ganho para cada tipo de sapo.
+* `paylinePatterns`: Um array de arrays que define os padrões das linhas de pagamento. Cada padrão é um array de pares `[coluna, linha]` indicando a posição do símbolo em cada rolo para aquela linha.
+
+### 5.3. Funções Principais
+
+* **`updateBalance()`:** Atualiza a exibição do saldo na página.
+* **`initializeSymbols()`:** Inicializa os símbolos dos rolos com cores aleatórias ao carregar a página.
+* **`addToHistory(text)`:** Adiciona uma nova entrada ao histórico de jogadas na página.
+* **`clearWinHighlights()`:** Remove qualquer destaque visual de vitórias dos símbolos.
+* **`checkStrictSequence(symbols)`:** Verifica se há uma sequência estrita de pelo menos três símbolos idênticos (ou curingas após o primeiro símbolo não curinga) em uma linha de pagamento, da esquerda para a direita. Retorna informações sobre a sequência (símbolo base, contagem, posições) ou `null` se não houver sequência válida.
+* **`spinReels()`:** Simula o giro dos rolos, alterando as cores dos símbolos de forma aleatória com diferentes probabilidades para cada tipo de sapo (incluindo uma menor probabilidade para o curinga e o sapo dourado). Retorna uma Promise que resolve com os resultados do giro (um array bidimensional representando os símbolos em cada rolo).
+* **`checkWins(results)`:** Analisa os resultados do giro e os compara com os padrões de linhas de pagamento (`paylinePatterns`). Calcula os ganhos totais e identifica as linhas vencedoras, incluindo a condição especial para o jackpot na linha do meio com cinco símbolos dourados (ou curingas). Retorna um objeto com o total ganho, as linhas vencedoras e os símbolos vencedores.
+* **`highlightWins(winData)`:** Destaca visualmente os símbolos que fazem parte de uma combinação vencedora na tela.
+* **`processSpin()`:** Função assíncrona que gerencia o processo de um único giro:
+    * Verifica se a aposta é válida e se o jogador tem saldo suficiente.
+    * Debita o valor da aposta do saldo.
+    * Chama `spinReels()` para obter os resultados do giro.
+    * Chama `checkWins()` para verificar se houve ganhos.
+    * Atualiza o saldo com os ganhos.
+    * Exibe mensagens de resultado e atualiza o histórico.
+    * Chama `highlightWins()` para destacar as vitórias.
+* **`handleAutoSpin()`:** Inicia o processo de giros automáticos se o valor no input de auto-giro for maior que zero.
+* **`runAutoSpins()`:** Executa os giros automáticos em um loop, chamando `processSpin()` a cada segundo até que a contagem de giros automáticos termine ou o giro seja interrompido.
+
+### 5.4. Listeners de Eventos
+
+* **Botão "GIRAR" (`spinButton`):** Ao ser clicado, inicia um novo giro (`processSpin()`) ou a sequência de auto-giros (`handleAutoSpin()`), dependendo do valor no input de auto-giro.
+* **Botão "+ R$ 100,00" (`addMoneyBtn`):** Ao ser clicado, adiciona 100 ao saldo do jogador e atualiza o histórico.
+* **Input de Aposta (`betAmountEl`):** Ao ter seu valor alterado, garante que o valor mínimo da aposta seja 10.
+* **Input de Auto-Giro (`autoSpinsEl`):** Ao ter seu valor alterado, garante que o valor esteja entre 0 e 100.
+
+### 5.5. Inicialização
+
+Ao carregar a página, as funções `initializeSymbols()` e `updateBalance()` são chamadas para preparar o estado inicial do jogo.
+
+## 6. Tipos de Sapo e Pagamentos
+
+| Cor        | Nome           | Multiplicador (para sequência de 3+) | Nota                                  |
+| :--------- | :------------- | :---------------------------------- | :------------------------------------ |
+| Dourado    | Sapo Dourado   | x10                               | Também concede o JACKPOT (5 na linha do meio) |
+| Verde      | Sapo Verde     | x4                                |                                       |
+| Azul       | Sapo Azul      | x5                                |                                       |
+| Vermelho   | Sapo Vermelho  | x6                                |                                       |
+| Preto      | Sapo Preto     | x3                                |                                       |
+| Roxo       | Sapo Mágico    | x8                                | Curinga (pode substituir outros sapos após o primeiro não curinga) |
+
+**Jackpot:** R$ 100.000,00 (concedido por 5 símbolos de Sapo Dourado ou Curingas na linha do meio).
+
+## 7. Linhas de Pagamento
+
+O jogo possui as seguintes linhas de pagamento:
+
+1.  Horizontal superior
+2.  Horizontal central
+3.  Horizontal inferior
+4.  Diagonal (topo esquerdo ao centro, ao topo direito)
+5.  Diagonal invertida (baixo esquerdo ao centro, ao baixo direito)
+6.  Zigue-zague (topo esquerdo, baixo central, topo direito)
+
+(Observação: A descrição das linhas de pagamento pode ser mais detalhada se necessário, referenciando os índices nos `paylinePatterns`).
+
+## 8. Próximos Passos e Melhorias
+
+* Adicionar efeitos sonoros para tornar o jogo mais imersivo.
+* Melhorar a interface do usuário com gráficos mais elaborados.
+* Implementar persistência de dados para salvar o saldo e o histórico do jogador.
+* Tornar o jogo responsivo para diferentes dispositivos.
+* Adicionar mais padrões de linhas de pagamento.
+* Implementar funcionalidades adicionais como rodadas bônus ou multiplicadores.
+* Realizar testes extensivos para garantir a robustez e correção da lógica do jogo.
+
+Esta documentação fornece uma visão geral do código e de sua estrutura. Use-a como referência para entender, modificar e expandir o seu jogo "Pulo do Sapo"!
