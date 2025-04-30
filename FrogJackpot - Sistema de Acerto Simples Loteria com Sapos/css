@@ -1,0 +1,812 @@
+/**
+ * FrogJackpot - Sistema de Loteria com Sapos
+ * Arquivo: style.css
+ * Versão: 1.0.0
+ * Autor: Luiz reinã
+ * Última Atualização: 2025-04-20 20:57:37 UTC
+ */
+
+/* Reset básico e configurações globais */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Variáveis de cores para o tema claro (tons pastel mais vibrantes) */
+:root {
+    /* Cores de fundo */
+    --primary-bg: #e0e4ff;      /* Azul pastel claro */
+    --secondary-bg: #fff0f9;    /* Rosa pastel muito claro */
+    --content-bg: #ffffff;      /* Branco puro */
+    --modal-bg: #ffffff;        /* Branco puro */
+    --header-bg: #e0e4ff;       /* Azul pastel claro */
+    --card-bg: #fff0f9;         /* Rosa pastel muito claro */
+    --input-bg: #ffffff;        /* Branco puro */
+    --history-item-bg: #fff0f9; /* Rosa pastel muito claro */
+    
+    /* Cores de texto e bordas */
+    --text-color: #494c7d;      /* Azul escuro suave */
+    --border-color: #c5c8ff;    /* Azul pastel médio */
+    --card-border: #c5c8ff;     /* Azul pastel médio */
+    --input-border: #a5b4ff;    /* Azul pastel médio */
+    --color-option-border: #a5b4ff; /* Azul pastel médio */
+    
+    /* Cores de botões */
+    --button-bg: #a5b4ff;       /* Azul pastel médio */
+    --button-hover: #8494ff;    /* Azul pastel mais escuro */
+    --button-text: #494c7d;     /* Azul escuro suave */
+}
+
+/* Tema escuro - Sobrescreve variáveis do tema claro */
+.dark-theme {
+    /* Cores de fundo */
+    --primary-bg: #1a1a2e;
+    --secondary-bg: #16213e;
+    --content-bg: #1f2937;
+    --modal-bg: #1a1a2e;
+    --header-bg: #16213e;
+    --card-bg: rgba(0, 0, 0, 0.4);
+    --input-bg: rgba(255, 255, 255, 0.9);
+    --history-item-bg: rgba(0, 0, 0, 0.2);
+    
+    /* Cores de texto e bordas */
+    --text-color: #fff;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --card-border: rgba(255, 255, 255, 0.1);
+    --input-border: transparent;
+    --color-option-border: transparent;
+    
+    /* Cores de botões */
+    --button-bg: #4caf50;
+    --button-hover: #45a049;
+    --button-text: #ffffff;
+}
+/* Estilos do corpo da página */
+body {
+    background: var(--primary-bg);
+    color: var(--text-color);
+    min-height: 100vh;
+    padding: 20px;
+    overflow-x: hidden;
+    transition: background-color 0.3s ease;
+}
+
+/* Gradiente para tema claro */
+body:not(.dark-theme) {
+    background: linear-gradient(135deg, #e0e4ff, #fff0f9);
+}
+
+/* Gradiente para tema escuro */
+body.dark-theme {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+}
+
+/* Container principal */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.5s ease;
+}
+
+/* Estilos do cabeçalho */
+header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+/* Layout do cabeçalho */
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+/* Título principal */
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    color: var(--button-bg);
+    text-shadow: 0 0 10px rgba(165, 180, 255, 0.5);
+    animation: glow 2s ease-in-out infinite;
+}
+
+/* Área de controles do usuário */
+.user-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Container dos botões de perfil e configurações */
+.profile-settings {
+    display: flex;
+    gap: 10px;
+}
+
+/* Botões de perfil e configurações */
+.profile-btn,
+.settings-btn {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+/* Hover dos botões de perfil e configurações */
+.profile-btn:hover,
+.settings-btn:hover {
+    background-color: var(--button-bg);
+    color: var(--button-text);
+}
+
+/* Estilo do Jackpot */
+.jackpot {
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+    background: linear-gradient(90deg, var(--button-bg), var(--button-hover));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: bold;
+    animation: shimmer 2s infinite;
+}
+
+/* Estilo do saldo */
+.balance {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: var(--secondary-bg);
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-color);
+}
+
+/* Hover do saldo */
+.balance:hover {
+    transform: scale(1.02);
+    background-color: var(--header-bg);
+}
+/* Área de controles do jogo */
+.game-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+/* Grade de sapos e resultados */
+.color-selection,
+.results,
+.selected-colors-display {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+    animation: slideIn 0.5s ease;
+    padding: 5px;
+}
+
+/* Títulos das seções */
+h2 {
+    grid-column: 1 / -1;
+    margin-bottom: 10px;
+    color: var(--text-color);
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Células de sapos - Estilo comum */
+.color-option, 
+.selected-color, 
+.result-color {
+    width: 100%;
+    aspect-ratio: 1/1; /* Mantém proporção quadrada */
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    background-color: var(--secondary-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid var(--color-option-border);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+/* Imagens dentro das células */
+.color-option img, 
+.selected-color img, 
+.result-color img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+}
+
+/* Contador de seleções */
+.selection-count {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
+    border: 2px solid var(--border-color);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    animation: popIn 0.3s ease;
+}
+
+/* Interações com opções de cores */
+.color-option:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px var(--button-bg);
+}
+
+.color-option:active {
+    transform: scale(0.95);
+}
+
+.color-option.selected {
+    border-color: var(--button-hover);
+    box-shadow: 0 0 15px var(--button-bg);
+    animation: pulse 1s infinite;
+}
+
+/* Área de sapos selecionados */
+.selected-colors {
+    margin: 20px 0;
+}
+
+.selected-color.filled {
+    border: 2px solid var(--button-bg);
+    box-shadow: 0 0 10px var(--button-bg);
+    animation: bounceIn 0.5s ease;
+}
+
+/* Área de resultados */
+.result-color {
+    opacity: 0;
+    transition: all 0.5s ease;
+    transform: scale(0);
+}
+
+.result-color.revealed {
+    opacity: 1;
+    transform: scale(1);
+    border: 2px solid var(--button-bg);
+    box-shadow: 0 0 10px var(--button-bg);
+    animation: revealColor 0.5s ease;
+}
+
+/* Adicione a nova classe matching aqui */
+.matching {
+    border: 3px solid #4CAF50 !important;
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.5) !important;
+    animation: pulse 1s infinite !important;
+}
+
+
+
+/* Controles de aposta */
+.bet-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.bet-input {
+    display: flex;
+    gap: 10px;
+}
+/* Estilização de inputs */
+input[type="number"] {
+    color: #000; /* Mantém números sempre em preto para melhor legibilidade */
+}
+
+input {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid var(--input-border);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    flex: 1;
+}
+
+/* Estado de foco dos inputs */
+input:focus {
+    outline: none;
+    box-shadow: 0 0 10px var(--button-bg);
+    border-color: var(--button-bg);
+    transform: scale(1.02);
+}
+
+/* Estilização geral de botões */
+button {
+    padding: 10px 15px;
+    border-radius: 5px;
+    border: none;
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Estados dos botões */
+button:hover {
+    background-color: var(--button-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+button:disabled {
+    background-color: var(--border-color);
+    cursor: not-allowed;
+    transform: none;
+    opacity: 0.7;
+}
+
+/* Botão de reset */
+#resetBtn {
+    background-color: #f44336; /* Vermelho para ação destrutiva */
+}
+
+#resetBtn:hover {
+    background-color: #d32f2f;
+}
+
+/* Mensagem de resultado */
+.result-message {
+    text-align: center;
+    font-size: 1.5rem;
+    margin: 20px 0;
+    padding: 15px;
+    border-radius: 5px;
+    background-color: var(--secondary-bg);
+    min-height: 60px;
+    transition: all 0.3s ease;
+}
+
+/* Estilos para vitória */
+.win {
+    color: #4caf50;
+    font-weight: bold;
+    animation: celebrate 1.5s infinite;
+    text-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+}
+
+/* Estilos para derrota */
+.loss {
+    color: #f44336;
+    animation: shake 0.5s ease;
+}
+
+/* Histórico de jogadas */
+.history {
+    margin-top: 20px;
+    padding-top: 10px;
+    border-top: 2px solid var(--border-color);
+}
+
+.history h3 {
+    margin-bottom: 10px;
+    color: var(--text-color);
+    font-size: 1.2rem;
+}
+
+.history-list {
+    max-height: 150px;
+    overflow-y: auto;
+    background-color: var(--secondary-bg);
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid var(--border-color);
+}
+
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+    border-bottom: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+    color: var(--text-color);
+}
+
+.history-item:hover {
+    background-color: var(--header-bg);
+    transform: translateX(5px);
+}
+/* Estrutura base dos modais */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Overlay semi-transparente */
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+/* Conteúdo dos modais */
+.modal-content {
+    background-color: var(--modal-bg);
+    margin: 5% auto;
+    padding: 20px;
+    width: 80%;
+    max-width: 700px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    color: var(--text-color);
+}
+
+/* Botão de fechar modal */
+.close {
+    color: var(--text-color);
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.close:hover {
+    color: var(--button-bg);
+    transform: rotate(90deg);
+}
+
+/* Estilos específicos para modais de perfil e configurações */
+.profile-modal,
+.settings-modal {
+    max-width: 500px;
+    background-color: var(--modal-bg);
+}
+
+/* Cabeçalho dos modais */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* Seção de avatar no perfil */
+.avatar-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+#userAvatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--button-bg);
+}
+
+/* Grupos de formulário */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--text-color);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--input-border);
+    border-radius: 4px;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+}
+
+/* Botões do formulário */
+.form-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* Configurações */
+.settings-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-color);
+}
+
+.setting-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Switch toggle para configurações */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--border-color);
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: '';
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: var(--content-bg);
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--button-bg);
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+/* Botão de adicionar saldo */
+#addBalanceBtn {
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: all 0.3s ease;
+}
+
+#addBalanceBtn:hover {
+    background-color: var(--button-hover);
+}
+/* Animações */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes popIn {
+    from { transform: scale(0); }
+    to { transform: scale(1); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes bounceIn {
+    0% { transform: scale(0.3); }
+    50% { transform: scale(1.05); }
+    70% { transform: scale(0.9); }
+    100% { transform: scale(1); }
+}
+
+@keyframes revealColor {
+    from { transform: scale(0) rotate(-180deg); }
+    to { transform: scale(1) rotate(0); }
+}
+
+@keyframes celebrate {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+@keyframes glow {
+    0% { text-shadow: 0 0 10px var(--button-bg); }
+    50% { text-shadow: 0 0 20px var(--button-hover); }
+    100% { text-shadow: 0 0 10px var(--button-bg); }
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+}
+
+/* Tabela de regras */
+.table-rules {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background-color: var(--secondary-bg);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.table-rules th,
+.table-rules td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.table-rules th {
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    font-weight: bold;
+}
+
+.table-rules tr:hover {
+    background-color: var(--header-bg);
+}
+
+.table-rules tr:last-child td {
+    border-bottom: none;
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+    /* Container principal */
+    .container {
+        padding: 10px;
+    }
+
+    /* Grade de cores */
+    .color-selection,
+    .results,
+    .selected-colors-display {
+        grid-template-columns: repeat(6, minmax(45px, 1fr));
+        gap: 5px;
+        padding: 5px;
+        margin: 0 -5px;
+    }
+
+    /* Esconde scrollbars em dispositivos móveis */
+    .color-selection::-webkit-scrollbar,
+    .results::-webkit-scrollbar,
+    .selected-colors-display::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Ajusta tamanho das células */
+    .color-option,
+    .selected-color,
+    .result-color {
+        min-width: 45px;
+        width: 100%;
+        aspect-ratio: 1/1;
+    }
+
+    /* Reorganiza controles de aposta */
+    .bet-input {
+        flex-direction: column;
+    }
+
+    /* Ajusta inputs e botões */
+    input,
+    button {
+        width: 100%;
+        margin: 5px 0;
+    }
+
+    /* Ajusta tamanhos de texto */
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    .jackpot {
+        font-size: 1.2rem;
+    }
+
+    /* Ajusta display do saldo */
+    .balance {
+        font-size: 1rem;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    #addBalanceBtn {
+        margin-left: 0;
+    }
+
+    /* Ajusta modais */
+    .modal-content {
+        width: 95%;
+        margin: 10% auto;
+        padding: 15px;
+    }
+
+    /* Ajusta histórico */
+    .history-list {
+        max-height: 200px;
+    }
+
+    .history-item {
+        flex-direction: column;
+        gap: 5px;
+    }
+}
