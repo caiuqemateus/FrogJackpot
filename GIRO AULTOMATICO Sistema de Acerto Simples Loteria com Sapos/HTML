@@ -1,0 +1,317 @@
+<!--
+    FrogJackpot - Sistema de Loteria com Sapos
+    Versão: 1.0.3
+    Autor: Luiz reinã
+    Última Atualização: 2025-05-28 00:14:19
+    
+    Este é o arquivo HTML principal que define a estrutura da interface do jogo.
+    O documento usa HTML5 e inclui elementos para o jogo de loteria,
+    modais de configuração e perfil do usuário.
+-->
+
+
+<!DOCTYPE html>
+<html lang="pt-BR"> <!-- Define o idioma padrão como Português do Brasil -->
+<head>
+    <!-- Meta tags para configuração básica -->
+    <meta charset="UTF-8"> <!-- Codificação de caracteres -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Configuração para responsividade -->
+    <title>Loteria dos Sapos</title>
+    
+    <!-- Recursos externos -->
+    <!-- Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Arquivo CSS personalizado -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Container principal -->
+    <div class="container">
+        <!-- Cabeçalho da página -->
+        <header>
+            <div class="header-content">
+                <h1>Loteria dos Sapos</h1>
+                <!-- Controles do usuário (perfil e configurações) -->
+                <div class="user-controls">
+                    <div class="profile-settings">
+                        <!-- Botão de perfil -->
+                        <button id="profileBtn" class="profile-btn">
+                            <i class="fas fa-user"></i>
+                        </button>
+                        <!-- Botão de configurações -->
+                        <button id="settingsBtn" class="settings-btn">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- Display do Jackpot -->
+            <div class="jackpot">Jackpot Atual: <span id="jackpotValue">R$ 100.000,00</span></div>
+            <!-- Display do saldo e botão para adicionar fundos -->
+            <div class="balance">
+                Seu Saldo: <span id="balanceValue">R$ 1.000,00</span>
+                <button id="addBalanceBtn">➕ R$ 100,00</button>
+            </div>
+            <!-- Botão para exibir regras -->
+            <button class="rules-btn" id="rulesBtn">Ver Regras do Jogo</button>
+        </header>
+
+        <!-- Área principal do jogo -->
+        <div class="game-controls">
+            <!-- Área de seleção de cores -->
+            <div class="color-selection">
+                <h2>Escolha seus sapos (total: 6 seleções):</h2>
+            </div>
+
+            <!-- Display dos sapos selecionados -->
+            <div class="selected-colors">
+                <h2>Seus Sapos Selecionados:</h2>
+                <!-- Grid de slots para sapos selecionados -->
+                <div class="selected-colors-display">
+                    <div class="selected-color" id="selected0" title="Slot 1"></div>
+                    <div class="selected-color" id="selected1" title="Slot 2"></div>
+                    <div class="selected-color" id="selected2" title="Slot 3"></div>
+                    <div class="selected-color" id="selected3" title="Slot 4"></div>
+                    <div class="selected-color" id="selected4" title="Slot 5"></div>
+                    <div class="selected-color" id="selected5" title="Slot 6"></div>
+                </div>
+            </div>
+
+            <!-- Controles de aposta -->
+            <div class="bet-controls">
+                <div class="bet-input">
+                    <!-- Campo de entrada para valor da aposta -->
+                    <input 
+                        type="number" 
+                        id="betAmount" 
+                        min="0.5" 
+                        max="10000" 
+                        value="50" 
+                        placeholder="Valor da aposta (mínimo R$ 0,50)"
+                    >
+                       <input 
+                        type="number" 
+                        id="autoPlayCount" 
+                        min="0" 
+                        max="100" 
+                        value="0" 
+                        placeholder="Número de jogadas automáticas (0-100)"
+                      >
+                       <button id="playBtn">Jogar</button>
+                    <button id="resetBtn">Limpar Seleção</button>
+                 </div>
+              </div>
+
+            <!-- Área de resultados -->
+            <div class="results">
+                <h2>Resultado do Sorteio:</h2>
+                <!-- Grid de slots para exibição dos resultados -->
+                <div class="result-color" id="result0" title="Resultado 1"></div>
+                <div class="result-color" id="result1" title="Resultado 2"></div>
+                <div class="result-color" id="result2" title="Resultado 3"></div>
+                <div class="result-color" id="result3" title="Resultado 4"></div>
+                <div class="result-color" id="result4" title="Resultado 5"></div>
+                <div class="result-color" id="result5" title="Resultado 6"></div>
+            </div>
+
+            <!-- Mensagem de resultado (vitória/derrota) -->
+            <div class="result-message" id="resultMessage"></div>
+        </div>
+
+        <!-- Seção de histórico -->
+        <div class="history">
+            <h3>Histórico de Jogadas</h3>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <!-- Modal de Regras do Jogo -->
+    <div id="rulesModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Regras do Jogo – Loteria dos Sapos</h2>
+
+            <!-- Seção 1: Como Jogar -->
+            <h3>➊ Como Jogar</h3>
+            <p>• Selecione 6 sapos no total (pode repetir o mesmo sapo até 6 vezes)</p>
+            <p>• Faça sua aposta (mínimo R$ 10,00)</p>
+            <p>• Aguarde o sorteio dos 6 sapos</p>
+
+            <!-- Seção 2: Tabela de Prêmios -->
+            <h3>➋ Prêmios </h3>
+            <table class="table-rules">
+                <tr>
+                    <th>Combinação</th>
+                    <th>Descrição</th>
+                    <th>Multiplicador</th>
+                </tr>
+                <tr>
+                    <td>Sequência Completa</td>
+                    <td>6 sapos iguais nas mesmas posições</td>
+                    <td>Jackpot ou 1000x</td>
+                </tr>
+                <tr>
+                    <td>Quina</td>
+                    <td>5 sapos iguais em sequência</td>
+                    <td>500x</td>
+                </tr>
+                <tr>
+                    <td>Quadra</td>
+                    <td>4 sapos iguais em sequência</td>
+                    <td>100x</td>
+                </tr>
+                <tr>
+                    <td>Tripla</td>
+                    <td>3 sapos iguais em sequência</td>
+                    <td>25x</td>
+                </tr>
+                <tr>
+                    <td>Par</td>
+                    <td>2 sapos iguais em sequência</td>
+                    <td>5x</td>
+                </tr>
+                <tr>
+                    <td>Acertos Simples</td>
+                    <td>2-3 sapos iguais em posições exatas (sem sequência)</td>
+                    <td>
+                        2 sapos: 2x<br>
+                        3 sapos: 3x<br>
+                       
+                    </td>
+                </tr>
+            </table>
+
+            <!-- Seção 3: Regras do Jackpot -->
+            <h3>➌ Regras do Jackpot </h3>
+            <ul>
+                <!-- Lista de regras para ganhar o jackpot -->
+                <p>• 2% de cada aposta vai para o Jackpot</p>
+                <p>• Precisa ter feito 5+ jogadas na última hora</p>
+                <p>• Casa precisa estar no lucro</p>
+                <p>• Valor inicial: R$ 100.000,00</p>
+            </ul>
+
+            <!-- Seção 4: Dicas para os jogadores -->
+            <h3>➍ Dicas </h3>
+            <p>• Você pode clicar em um sapo várias vezes</p>
+            <p>• O contador mostra quantas vezes selecionou cada sapo</p>
+            <p>• Use o botão "Limpar" para recomeçar a seleção</p>
+            <p>• Observe o histórico para aprender padrões</p>
+            <p>• Acertos simples são pagos mesmo sem formar sequência</p>
+        </div>
+    </div>
+
+    <!-- Modal de Perfil do Usuário -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content profile-modal">
+            <!-- Cabeçalho do modal -->
+            <div class="modal-header">
+                <h2>Perfil do Jogador</h2>
+                <span class="close" id="closeProfile">&times;</span>
+            </div>
+            
+            <!-- Formulário de perfil -->
+            <form id="profileForm" class="profile-form">
+                <!-- Seção de avatar -->
+                <div class="avatar-section">
+                    <img 
+                        id="userAvatar" 
+                        src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" 
+                        alt="Avatar do jogador"
+                    >
+                    <button type="button" id="changeAvatarBtn">Alterar Avatar</button>
+                    <input 
+                        type="file" 
+                        id="avatarInput" 
+                        accept="image/*" 
+                        hidden
+                    >
+                </div>
+                
+                <!-- Campo de nome de usuário -->
+                <div class="form-group">
+                    <label for="username">Nome de Usuário</label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
+                        required
+                    >
+                </div>
+                
+                <!-- Botões de ação do formulário -->
+                <div class="form-buttons">
+                    <button type="button" class="cancel-btn" id="cancelProfile">Cancelar</button>
+                    <button type="submit" class="save-btn">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Configurações -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content settings-modal">
+            <!-- Cabeçalho do modal de configurações -->
+            <div class="modal-header">
+                <h2>Configurações</h2>
+                <span class="close" id="closeSettings">&times;</span>
+            </div>
+            
+            <!-- Conteúdo das configurações -->
+            <div class="settings-content">
+                <!-- Configuração de Som -->
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <i class="fas fa-volume-up" id="soundIcon"></i>
+                        <span>Som</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="soundToggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <!-- Configuração de Notificações -->
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <i class="fas fa-bell" id="notificationIcon"></i>
+                        <span>Notificações</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="notificationToggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <!-- Configuração de Tema -->
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <i class="fas fa-moon" id="themeIcon"></i>
+                        <span>Tema Escuro</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="themeToggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <!-- Seleção de Idioma -->
+                <div class="setting-item">
+                    <div class="setting-label">
+                        <i class="fas fa-language"></i>
+                        <span>Idioma</span>
+                    </div>
+                    <select id="languageSelect">
+                        <option value="pt-BR">Português (BR)</option>
+                        <option value="en-US">English (US)</option>
+                        <option value="es">Español</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Carregamento do arquivo JavaScript principal -->
+    <script src="script.js"></script>
+</body>
+</html>
